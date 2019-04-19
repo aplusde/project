@@ -1,10 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+/* REDUX SET UP */
+
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux';
+import reduxThunk from 'redux-thunk';
+import reducers from './reducers'
+const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
+//
+const store = createStoreWithMiddleware(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
-ReactDOM.render(<App />, document.getElementById('root'));
+/* REDUX SET UP */
+
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+    , document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
