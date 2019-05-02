@@ -9,6 +9,10 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
 import reducers from './reducers'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Form from './pages/Form'
+import Addnode from './pages/Addnode'
+import ViewVariogram from './pages/ViewVariogram'
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 //
 const store = createStoreWithMiddleware(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
@@ -17,7 +21,9 @@ const store = createStoreWithMiddleware(reducers, window.__REDUX_DEVTOOLS_EXTENS
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <Router>
+            <Route path="/" exact component={Form} />
+        </Router>
     </Provider>
     , document.getElementById('root'));
 

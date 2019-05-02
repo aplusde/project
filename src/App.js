@@ -27,14 +27,7 @@ class App extends Component {
       <Router>
         <div className="App">
           <header className="App-header">
-            <ul>
-              <li><Link to="/">VIEW  ALL NODE</Link></li>
-              <li><Link to="/add-node">ADD NODE WITH ATTITUDE</Link></li>
-              <li><Link to="/view-formular">VIEW VARIOGRAM FORMULAR</Link></li>
-            </ul>
             <Route path="/" exact component={Form} />
-            <Route path="/add-node" component={Addnode} />
-            <Route path="/view-formular" component={ViewVariogram} />
           </header>
         </div>
       </Router>
