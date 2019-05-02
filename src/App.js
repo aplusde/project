@@ -1,5 +1,8 @@
 import React, { Component } from 'react'; // ONLY COMPONENT
-import Form from './components/Form'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Form from './pages/Form'
+import Addnode from './pages/Addnode'
+import ViewVariogram from './pages/ViewVariogram'
 import logo from './logo.svg';
 import './App.css';
 import Button from './components/Button';
@@ -19,30 +22,15 @@ class App extends Component {
     return alert(name)
   }
   render() {
-    console.log('nodeList', this.props) /*{
-      nodesList:[...],
-      userr:[...]
-    } */
+    console.log('nodeList', this.props)
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            TEST MY FIRST  REACT
-          </a>
-
-          <Form handleChange={this.HandleChangeName} /> {/*this is component*/}
-          <Button name={this.state.name} handlealert={this.Handlealert} /> {/*this is component*/}
-        </header>
-      </div>
+      <Router>
+        <div className="App">
+          <header className="App-header">
+            <Route path="/" exact component={Form} />
+          </header>
+        </div>
+      </Router>
     );
   }
 }

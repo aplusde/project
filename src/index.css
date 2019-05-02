@@ -12,3 +12,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.input-node{
+  display: flex;
+  align-items: center;
+}
+.input-node-title{
+  display : flex;
+}
+.input-node-title  p  {
+    margin-right:15px;
+}
