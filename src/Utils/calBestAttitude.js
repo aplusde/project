@@ -70,4 +70,5 @@ export const calCulateAttitude = (prod = []) => {
     console.log(bestSum)
     console.log(`ACTUAL ATTITUDE NODE ${id}`)
     console.log(attitude)
+    return bestSum
 }
