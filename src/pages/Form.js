@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { calCulateAttitude } from '../Utils/calBestAttitude'
 import { connect } from 'react-redux'
 import { getAllNode } from '../actions'
+import * as XLSX from 'xlsx';
+
 
 class Form extends Component {
     state = {
@@ -24,6 +26,25 @@ class Form extends Component {
                 }
             ]
         })
+    }
+    onChangeFile = e=>{
+        const file = e.target.files[0];
+       console.log(file)
+       var name = file.name;
+       const reader = new FileReader();
+       reader.onload = (evt) => { 
+        /* Parse data */
+        const bstr = evt.target.result;
+        const wb = XLSX.read(bstr, {type:'binary'});
+        /* Get first worksheet */
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        /* Convert array of arrays */
+        const data = XLSX.utils.sheet_to_json(ws, {header:1});
+        /* Update state */
+        console.log( data);
+    };
+    reader.readAsBinaryString(file);
     }
     onChangeNode = (e) => {
         const { nodes } = this.state
@@ -67,7 +88,7 @@ class Form extends Component {
                         </div>
                     ))
                 }
-                <input type="file"></input>
+                <input onChange={this.onChangeFile} type="file"></input>
                 <button onClick={this.addNode}>ADD  NODE</button>
                 <button onClick={this.onSubmit}>Submit</button>
             </div>

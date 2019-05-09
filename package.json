@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "convert-excel-to-json": "^1.6.1",
     "mathjs": "^5.9.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -11,7 +12,8 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "xlsx": "^0.14.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -27,5 +29,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "excel-as-json": "^2.0.2"
+  }
 }
