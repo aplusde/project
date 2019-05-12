@@ -14,6 +14,7 @@ export const calCulateAttitude = (prod = []) => {
             }
         })
     })
+    const allRangeOfNodes = range.map(({ range }) => range)
     let rangeArray = []
 
     for (let i = 1; i <= 10; i++) {
@@ -27,7 +28,7 @@ export const calCulateAttitude = (prod = []) => {
     let bestSill = 0;
     let bestRange = 0;
     let bestSum = 0;
-
+    let semiVarioGram
     for (let i = 0; i < nuggetArray.length; i++) {
         for (let j = 0; j < sillArray.length; j++) {
             for (let k = 0; k < rangeArray.length; k++) {
@@ -50,11 +51,12 @@ export const calCulateAttitude = (prod = []) => {
                     bestSill = j
                     bestRange = k
                     bestSum = sum
+                    semiVarioGram = vario.map(({ semi }) => semi)
                 }
             }
         }
     }
-    console.log('CALCULATE WITH 31 NODE FIND BEST  NUGGET, SILL, RANGE')
+    console.log('CALCULATE WITH NODES FIND BEST  NUGGET, SILL, RANGE')
     console.log('***********RESULT***********')
     console.log(`find attitude in node id`)
     console.log(id)
@@ -70,5 +72,9 @@ export const calCulateAttitude = (prod = []) => {
     console.log(bestSum)
     console.log(`ACTUAL ATTITUDE NODE ${id}`)
     console.log(attitude)
-    return bestSum
+    return {
+        bestSum,
+        allRangeOfNodes,
+        semiVarioGram
+    }
 }

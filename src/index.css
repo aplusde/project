@@ -6,6 +6,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #e0e0e0;
 }
 
 code {
@@ -15,7 +16,32 @@ code {
 
 .container-graph{
   display: flex;
+  justify-content: space-between;
   
+}
+.id-node{
+  margin-right:20px;
+  text-align: left;
+  width:15px;
+}
+
+.graph {
+  display:flex;
+  flex-direction: column;
+}
+
+.node-p-id{
+  width:0;
+}
+.node-unit{
+  width:100%;
+  padding-left: 15px;
+}
+input {
+  width: auto;
+  height: 20px;
+  font-size: 16px;
+  margin-right: 15px;
 }
 .input-node{
   display: flex;

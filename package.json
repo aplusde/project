@@ -13,6 +13,7 @@
     "react-redux": "^7.0.2",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
+    "react-spinner": "^0.2.7",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "xlsx": "^0.14.3"
