@@ -1,19 +1,14 @@
 import React, { Component } from 'react'
 import Plot from 'react-plotly.js';
-import { ClipLoader } from 'react-spinner';
+import memoize from 'fast-memoize'
 import { calCulateAttitude } from '../Utils/calBestAttitude'
+import Loader from 'react-loader-spinner'
 import { connect } from 'react-redux'
 import { getAllNode } from '../actions'
 import * as XLSX from 'xlsx';
 import getXYZ from '../Utils/getXYZ';
 
-
-const override = css`
-    display: block;
-    margin: 0 auto;
-    border-color: red;
-`;
-
+const memoizeCalCulateAttitude = memoize(calCulateAttitude)
 class Form extends Component {
     state = {
         nodes: [
@@ -22,7 +17,7 @@ class Form extends Component {
         x: [],
         y: [],
         z: [],
-        loading: true,
+        loading: false,
     }
     addNode = () => {
         const { nodes } = this.state
@@ -68,7 +63,7 @@ class Form extends Component {
             }, [])
             this.setState({
                 nodes: transformDataNode
-            }, () => console.log(this.state))
+            })
         };
         reader.readAsBinaryString(file);
     }
@@ -82,64 +77,67 @@ class Form extends Component {
         })
     }
     deleteNodes = (e) => {
-        console.log(e.target.id)
         const { nodes } = this.state
         const { id } = e.target
         const nodeIdTarget = parseInt(id)
         const updateDeleteNode = nodes.filter(({ id }) => id !== nodeIdTarget)
-        console.log(nodes)
-        console.log(updateDeleteNode)
         this.setState({
             nodes: updateDeleteNode
         })
     }
     onSubmit = () => {
-        const { nodes } = this.state
-        console.log(nodes)
-        const { bestSum, allRangeOfNodes, semiVarioGram } = calCulateAttitude(nodes)
-        let scatterGraph = []
-        for (let i = 0; i < allRangeOfNodes.length - 1; i++) {
-            allRangeOfNodes[i].pop()
-            semiVarioGram[i].pop()
-            const range = allRangeOfNodes[i]
-            const semi = semiVarioGram[i]
-            scatterGraph = [
-                ...scatterGraph,
-                {
+      
+        const { nodes,loading } = this.state
+        this.setState({
+            loading: !loading
+        })
+        setTimeout(()=>{
+            const { bestSum, allRangeOfNodes, semiVarioGram } = memoizeCalCulateAttitude(nodes)
+            let scatterGraph = new Array()
+            for (let i = 0; i < allRangeOfNodes.length - 1; i++) {
+                allRangeOfNodes[i].pop()
+                semiVarioGram[i].pop()
+                const range = allRangeOfNodes[i]
+                const semi = semiVarioGram[i]
+                scatterGraph.push({
                     x: range,
                     y: semi,
                     mode: 'markers',
                     name: `Node ${i + 1}`,
                     type: 'scatter'
-                }
-            ]
-        }
-        console.log(scatterGraph)
-        let newNodesWithLastAttitude = nodes
-        newNodesWithLastAttitude[newNodesWithLastAttitude.length - 1].attitude = bestSum
-        const x = getXYZ(newNodesWithLastAttitude, 'latitude')
-        const y = getXYZ(newNodesWithLastAttitude, 'longtitude')
-        const z = getXYZ(newNodesWithLastAttitude, 'attitude')
-        this.setState({
-            nodes: newNodesWithLastAttitude,
-            x: x,
-            y: y,
-            z: z,
-            scatterGraph
-        })
-
+                })
+            }
+            let newNodesWithLastAttitude = nodes
+            newNodesWithLastAttitude[newNodesWithLastAttitude.length - 1].attitude = bestSum
+            const x = getXYZ(newNodesWithLastAttitude, 'latitude')
+            const y = getXYZ(newNodesWithLastAttitude, 'longtitude')
+            const z = getXYZ(newNodesWithLastAttitude, 'attitude')
+            this.setState({
+                nodes: newNodesWithLastAttitude,
+                x: x,
+                y: y,
+                z: z,
+                scatterGraph,
+                loading:false
+            })
+    
+        },500)
+        
     }
     render() {
-        const { nodes, x, y, z } = this.state;
+        const { nodes, x, y, z,loading } = this.state;
         return (
             <div className="container-graph">
-                <ClipLoader
-                    css={override}
-                    sizeUnit={"px"}
-                    size={150}
-                    color={'#123abc'}
-                    loading={this.state.loading}
-                />
+                {
+                loading&&
+                <div className="modal">
+                    <Loader 
+                        type="Puff"
+                        color="#00BFFF"
+                        height="100"	
+                        width="100"
+                    />
+                </div> }  
                 <div style={{ margin: '15px' }}>
                     <h1>FORM NODE  LIST</h1>
                     <div className="input-node-title">
@@ -155,13 +153,13 @@ class Form extends Component {
                                     <p>{id}</p>
                                 </div>
                                 <div>
-                                    <input onChange={this.onChangeNode} id={id} name="latitude" value={latitude} defaultValue={latitude}></input>
+                                    <input onChange={this.onChangeNode} id={id} name="latitude" value={latitude||''} ></input>
                                 </div>
                                 <div>
-                                    <input onChange={this.onChangeNode} id={id} name="longtitude" value={longtitude} defaultValue={longtitude}></input>
+                                    <input onChange={this.onChangeNode} id={id} name="longtitude" value={longtitude||''} ></input>
                                 </div>
                                 <div>
-                                    <input onChange={this.onChangeNode} id={id} name="attitude" value={attitude} defaultValue={attitude}></input>
+                                    <input onChange={this.onChangeNode} id={id} name="attitude" value={attitude||''} ></input>
                                 </div>
                                 <div>
                                     <button id={id} onClick={this.deleteNodes}>Delete</button>
