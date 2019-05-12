@@ -2,7 +2,6 @@ import math from 'mathjs'
 import createRangeTable from "./createRangeTable";
 import tranformSemivariance from "./tranformSemivariance";
 import createMatrix from "./createMatrix";
-
 export const calCulateAttitude = (prod = []) => {
     const { id, attitude } = prod[prod.length - 1]
     let max = 0
@@ -15,14 +14,13 @@ export const calCulateAttitude = (prod = []) => {
         })
     })
     const allRangeOfNodes = range.map(({ range }) => range)
-    let rangeArray = []
+    const rangeArray = []
 
     for (let i = 1; i <= 10; i++) {
         rangeArray.push(i * max / 10)
     }
     let nuggetArray = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] //11 //10
     let sillArray = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] //  10
-    let total = []
     let min = 10;
     let bestNugget = 0;
     let bestSill = 0;
@@ -43,7 +41,6 @@ export const calCulateAttitude = (prod = []) => {
                     sum += vario[i].attitude * w[i]
                 }
                 const error = math.sum(math.dotMultiply(vario[vario.length - 1].semi, w))
-                total.push(error)
 
                 if (error < min) {
                     min = error
