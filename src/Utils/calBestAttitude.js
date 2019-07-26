@@ -53,22 +53,22 @@ export const calCulateAttitude = (prod = []) => {
             }
         }
     }
-    console.log('CALCULATE WITH NODES FIND BEST  NUGGET, SILL, RANGE')
-    console.log('***********RESULT***********')
-    console.log(`find attitude in node id`)
-    console.log(id)
-    console.log('predict  error:')
-    console.log(min)
-    console.log('NUGGET')
-    console.log(nuggetArray[bestNugget])
-    console.log('SILL')
-    console.log(sillArray[bestSill])
-    console.log('RANGE')
-    console.log(rangeArray[bestRange])
-    console.log(`EXPECT ATTITUDE NODE ${id}`)
-    console.log(bestSum)
-    console.log(`ACTUAL ATTITUDE NODE ${id}`)
-    console.log(attitude)
+    // console.log('CALCULATE WITH NODES FIND BEST  NUGGET, SILL, RANGE')
+    // console.log('***********RESULT***********')
+    // console.log(`find attitude in node id`)
+    // console.log(id)
+    // console.log('predict  error:')
+    // console.log(min)
+    // console.log('NUGGET')
+    // console.log(nuggetArray[bestNugget])
+    // console.log('SILL')
+    // console.log(sillArray[bestSill])
+    // console.log('RANGE')
+    // console.log(rangeArray[bestRange])
+    // console.log(`EXPECT ATTITUDE NODE ${id}`)
+    // console.log(bestSum)
+    // console.log(`ACTUAL ATTITUDE NODE ${id}`)
+    // console.log(attitude)
     return {
         bestSum,
         allRangeOfNodes,

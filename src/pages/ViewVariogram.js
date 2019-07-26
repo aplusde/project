@@ -11,14 +11,13 @@ class Variogram extends Component {
         const { name, value } = e.target
         this.setState({
             [name]: value
-        }, () => console.log(this.state))
+        })
 
     }
     onSubmit = () => {
         this.props.handleSumitNode(this.state)
     }
     render() {
-        console.log(this.props.predict)
         return (
             <div>
                 <table>
