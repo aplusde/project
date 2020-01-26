@@ -18,7 +18,6 @@ export const calCulateAttitude = (prod = []) => {
     });
   });
 
-  const allRangeOfNodes = range.map(({ range }) => range);
   const rangeArray = [];
 
   for (let i = 1; i <= 10; i++) {
@@ -45,6 +44,8 @@ export const calCulateAttitude = (prod = []) => {
     vairiantNodeObject,
     'spherical'
   );
+
+  const allRangeOfNodes = range.map(({ range }) => range);
 
   const result = {
     bestSum: data.bestSum, //node attitue 31
