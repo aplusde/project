@@ -2,8 +2,11 @@ import math from 'mathjs';
 import createRangeTable from './createRangeTable';
 import tranformSemivariance from './tranformSemivariance';
 import createMatrix from './createMatrix';
+import getStatError from './getStatError';
+
 export const calCulateAttitude = (prod = []) => {
-  const { id, attitude } = prod[prod.length - 1];
+  console.log({ prod });
+  //TODO: prod -> nodes
   let maxRange = 0;
   const range = createRangeTable(prod);
 
@@ -21,8 +24,8 @@ export const calCulateAttitude = (prod = []) => {
   for (let i = 1; i <= 10; i++) {
     rangeArray.push((i * maxRange) / 10);
   }
+
   const data = calculateBestNuggetSillRange(range, maxRange);
-  console.log(data);
 
   const bestNugget = 0;
   const bestSill = 0.1;
@@ -37,23 +40,19 @@ export const calCulateAttitude = (prod = []) => {
     'exponential'
   );
 
-  const modelinear = calBestAttitudeLastNode(vairiantNodeObject, 'linear');
-  const modelspherical = calBestAttitudeLastNode(
+  const modelLinear = calBestAttitudeLastNode(vairiantNodeObject, 'linear');
+  const modelSpherical = calBestAttitudeLastNode(
     vairiantNodeObject,
     'spherical'
   );
-  console.log({
-    vairiantNodeObject,
-    modelinear,
-    modelexponential,
-    modelspherical
-  });
 
-  return {
-    bestSum: modelexponential.sum, //node attitue 31
+  const result = {
+    bestSum: data.bestSum, //node attitue 31
     allRangeOfNodes,
-    semiVarioGram: vairiantNodeObject.map(({ exponential }) => exponential)
+    semiVarioGram: data.semiVarioGram
   };
+
+  return result;
 };
 
 const calBestAttitudeLastNode = (vairiantNodeObject, model = 'exponential') => {
@@ -97,7 +96,7 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     gaussian: []
   };
 
-  let mockBestNugget = {
+  let bestNugget = {
     exponential: 0,
     linear: 0,
     spherical: 0,
@@ -105,7 +104,7 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     gaussian: 0
   };
 
-  let mockBestSil = {
+  let bestSill = {
     exponential: 0,
     linear: 0,
     spherical: 0,
@@ -113,7 +112,7 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     gaussian: 0
   };
 
-  let mockBestRange = {
+  let bestRange = {
     exponential: 0,
     linear: 0,
     spherical: 0,
@@ -137,42 +136,42 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
         maxRange
       );
 
-      const modelexponential = calBestAttitudeLastNode(
+      const modelExponential = calBestAttitudeLastNode(
         vairiantNodeObject,
         'exponential'
       );
 
-      const modelinear = calBestAttitudeLastNode(vairiantNodeObject, 'linear');
-      const modelspherical = calBestAttitudeLastNode(
+      const modelLinear = calBestAttitudeLastNode(vairiantNodeObject, 'linear');
+
+      const modelSpherical = calBestAttitudeLastNode(
         vairiantNodeObject,
         'spherical'
       );
-      const modelpentaspherical = calBestAttitudeLastNode(
+      const modelPentaSpherical = calBestAttitudeLastNode(
         vairiantNodeObject,
         'pentaspherical'
       );
-      const modelgussian = calBestAttitudeLastNode(
+      const modelGussian = calBestAttitudeLastNode(
         vairiantNodeObject,
         'gaussian'
       );
-      console.log(modelgussian.errorPedictionModel, modelgussian.sum);
 
       if (minError['gaussian'] === 0) {
-        minError['gaussian'] = modelgussian.errorPedictionModel;
-        mockBestNugget['gaussian'] = nuggetArray[i];
-        mockBestSil['gaussian'] = sillArray[j];
-        mockBestRange['gaussian'] = maxRange;
-        bestSum['gaussian'] = modelgussian.sum;
+        minError['gaussian'] = modelGussian.errorPedictionModel;
+        bestNugget['gaussian'] = nuggetArray[i];
+        bestSill['gaussian'] = sillArray[j];
+        bestRange['gaussian'] = maxRange;
+        bestSum['gaussian'] = modelGussian.sum;
         semiVarioGram['gaussian'] = vairiantNodeObject.map(
           ({ gaussian }) => gaussian
         );
       }
-      if (modelgussian.errorPedictionModel < minError['gaussian']) {
-        minError['gaussian'] = modelgussian.errorPedictionModel;
-        mockBestNugget['gaussian'] = nuggetArray[i];
-        mockBestSil['gaussian'] = sillArray[j];
-        mockBestRange['gaussian'] = maxRange;
-        bestSum['gaussian'] = modelgussian.sum;
+      if (modelGussian.errorPedictionModel < minError['gaussian']) {
+        minError['gaussian'] = modelGussian.errorPedictionModel;
+        bestNugget['gaussian'] = nuggetArray[i];
+        bestSill['gaussian'] = sillArray[j];
+        bestRange['gaussian'] = maxRange;
+        bestSum['gaussian'] = modelGussian.sum;
         semiVarioGram['gaussian'] = vairiantNodeObject.map(
           ({ gaussian }) => gaussian
         );
@@ -180,23 +179,23 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
       //
 
       if (minError['pentaspherical'] === 0) {
-        minError['pentaspherical'] = modelpentaspherical.errorPedictionModel;
-        mockBestNugget['pentaspherical'] = nuggetArray[i];
-        mockBestSil['pentaspherical'] = sillArray[j];
-        mockBestRange['pentaspherical'] = maxRange;
-        bestSum['pentaspherical'] = modelpentaspherical.sum;
+        minError['pentaspherical'] = modelPentaSpherical.errorPedictionModel;
+        bestNugget['pentaspherical'] = nuggetArray[i];
+        bestSill['pentaspherical'] = sillArray[j];
+        bestRange['pentaspherical'] = maxRange;
+        bestSum['pentaspherical'] = modelPentaSpherical.sum;
         semiVarioGram['pentaspherical'] = vairiantNodeObject.map(
           ({ pentaspherical }) => pentaspherical
         );
       }
       if (
-        modelpentaspherical.errorPedictionModel < minError['pentaspherical']
+        modelPentaSpherical.errorPedictionModel < minError['pentaspherical']
       ) {
-        minError['pentaspherical'] = modelpentaspherical.errorPedictionModel;
-        mockBestNugget['pentaspherical'] = nuggetArray[i];
-        mockBestSil['pentaspherical'] = sillArray[j];
-        mockBestRange['pentaspherical'] = maxRange;
-        bestSum['pentaspherical'] = modelpentaspherical.sum;
+        minError['pentaspherical'] = modelPentaSpherical.errorPedictionModel;
+        bestNugget['pentaspherical'] = nuggetArray[i];
+        bestSill['pentaspherical'] = sillArray[j];
+        bestRange['pentaspherical'] = maxRange;
+        bestSum['pentaspherical'] = modelPentaSpherical.sum;
         semiVarioGram['pentaspherical'] = vairiantNodeObject.map(
           ({ pentaspherical }) => pentaspherical
         );
@@ -204,21 +203,21 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
 
       /*linear*/
       if (minError['linear'] === 0) {
-        minError['linear'] = modelinear.errorPedictionModel;
-        mockBestNugget['linear'] = nuggetArray[i];
-        mockBestSil['linear'] = sillArray[j];
-        mockBestRange['linear'] = maxRange;
-        bestSum['linear'] = modelinear.sum;
+        minError['linear'] = modelLinear.errorPedictionModel;
+        bestNugget['linear'] = nuggetArray[i];
+        bestSill['linear'] = sillArray[j];
+        bestRange['linear'] = maxRange;
+        bestSum['linear'] = modelLinear.sum;
         semiVarioGram['linear'] = vairiantNodeObject.map(
           ({ linear }) => linear
         );
       }
-      if (modelinear.errorPedictionModel < minError['linear']) {
-        minError['linear'] = modelinear.errorPedictionModel;
-        mockBestNugget['linear'] = nuggetArray[i];
-        mockBestSil['linear'] = sillArray[j];
-        mockBestRange['linear'] = maxRange;
-        bestSum['linear'] = modelinear.sum;
+      if (modelLinear.errorPedictionModel < minError['linear']) {
+        minError['linear'] = modelLinear.errorPedictionModel;
+        bestNugget['linear'] = nuggetArray[i];
+        bestSill['linear'] = sillArray[j];
+        bestRange['linear'] = maxRange;
+        bestSum['linear'] = modelLinear.sum;
         semiVarioGram['linear'] = vairiantNodeObject.map(
           ({ linear }) => linear
         );
@@ -227,21 +226,21 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
 
       /* spherical */
       if (minError['spherical'] === 0) {
-        minError['spherical'] = modelspherical.errorPedictionModel;
-        mockBestNugget['spherical'] = nuggetArray[i];
-        mockBestSil['spherical'] = sillArray[j];
-        mockBestRange['spherical'] = maxRange;
-        bestSum['spherical'] = modelspherical.sum;
+        minError['spherical'] = modelSpherical.errorPedictionModel;
+        bestNugget['spherical'] = nuggetArray[i];
+        bestSill['spherical'] = sillArray[j];
+        bestRange['spherical'] = maxRange;
+        bestSum['spherical'] = modelSpherical.sum;
         semiVarioGram['spherical'] = vairiantNodeObject.map(
           ({ spherical }) => spherical
         );
       }
-      if (modelspherical.errorPedictionModel < minError['spherical']) {
-        minError['spherical'] = modelspherical.errorPedictionModel;
-        mockBestNugget['spherical'] = nuggetArray[i];
-        mockBestSil['spherical'] = sillArray[j];
-        mockBestRange['spherical'] = maxRange;
-        bestSum['spherical'] = modelspherical.sum;
+      if (modelSpherical.errorPedictionModel < minError['spherical']) {
+        minError['spherical'] = modelSpherical.errorPedictionModel;
+        bestNugget['spherical'] = nuggetArray[i];
+        bestSill['spherical'] = sillArray[j];
+        bestRange['spherical'] = maxRange;
+        bestSum['spherical'] = modelSpherical.sum;
         semiVarioGram['spherical'] = vairiantNodeObject.map(
           ({ spherical }) => spherical
         );
@@ -250,21 +249,21 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
 
       /*exponential*/
       if (minError['exponential'] === 0) {
-        minError['exponential'] = modelexponential.errorPedictionModel;
-        mockBestNugget['exponential'] = nuggetArray[i];
-        mockBestSil['exponential'] = sillArray[j];
-        mockBestRange['exponential'] = maxRange;
-        bestSum['exponential'] = modelexponential.sum;
+        minError['exponential'] = modelExponential.errorPedictionModel;
+        bestNugget['exponential'] = nuggetArray[i];
+        bestSill['exponential'] = sillArray[j];
+        bestRange['exponential'] = maxRange;
+        bestSum['exponential'] = modelExponential.sum;
         semiVarioGram['exponential'] = vairiantNodeObject.map(
           ({ exponential }) => exponential
         );
       }
-      if (modelexponential.errorPedictionModel < minError['exponential']) {
-        minError['exponential'] = modelexponential.errorPedictionModel;
-        mockBestNugget['exponential'] = nuggetArray[i];
-        mockBestSil['exponential'] = sillArray[j];
-        mockBestRange['exponential'] = maxRange;
-        bestSum['exponential'] = modelexponential.sum;
+      if (modelExponential.errorPedictionModel < minError['exponential']) {
+        minError['exponential'] = modelExponential.errorPedictionModel;
+        bestNugget['exponential'] = nuggetArray[i];
+        bestSill['exponential'] = sillArray[j];
+        bestRange['exponential'] = maxRange;
+        bestSum['exponential'] = modelExponential.sum;
         semiVarioGram['exponential'] = vairiantNodeObject.map(
           ({ exponential }) => exponential
         );
@@ -274,9 +273,9 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
   }
 
   return {
-    mockBestRange,
-    mockBestNugget,
-    mockBestSil,
+    bestRange,
+    bestNugget,
+    bestSill,
     bestSum,
     semiVarioGram,
     minError
