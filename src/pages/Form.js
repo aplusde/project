@@ -177,7 +177,7 @@ class Form extends Component {
             <p className="node-unit">Latitude</p>
             <p className="node-unit">Longtitude</p>
             <p className="node-unit">Altitude</p>
-            <p className="node-unit">Predict Altitude</p>
+            <p className="node-unit">Predicted Altitude</p>
           </div>
           {transformDataNode.map(
             ({ id, latitude, longtitude, attitude, predictAttitude }) => (
