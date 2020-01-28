@@ -269,7 +269,7 @@ class Form extends Component {
                     <td>{error['sherical'].rootMeanSquareError}</td>
                   </tr>
                   <tr>
-                    <td>Pentaschericle</td>
+                    <td>Pentaspherical</td>
                     <td>{error['pentaspherical'].meanError}</td>
                     <td>{error['pentaspherical'].meanOfPercentageError}</td>
                     <td>{error['pentaspherical'].meanAbsoluteError}</td>
