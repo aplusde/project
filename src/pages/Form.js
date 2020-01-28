@@ -95,6 +95,7 @@ class Form extends Component {
     });
     setTimeout(() => {
       const {
+        bestSumList,
         bestSum,
         allRangeOfNodes,
         semiVarioGram
@@ -103,6 +104,7 @@ class Form extends Component {
       let newNodesWithLastAttitude = nodes;
 
       this.setState({
+        bestSumList,
         lastPredictNode: bestSum,
         allRangeOfNodes,
         nodes: newNodesWithLastAttitude,
@@ -124,10 +126,11 @@ class Form extends Component {
       lastPredictNode = false,
       allRangeOfNodes,
       semiVarioGram,
+      bestSumList = false,
       model = 'exponential'
     } = this.state;
-    const transformDataNode = lastPredictNode
-      ? computePredict(lastPredictNode[model], nodes)
+    const transformDataNode = lastPredictNode // TODO: lastPredictNode
+      ? computePredict(lastPredictNode[model], nodes, bestSumList)
       : nodes;
 
     const scatterGraph = lastPredictNode
@@ -137,7 +140,7 @@ class Form extends Component {
     const y = getXYZ(transformDataNode, 'longtitude');
     const z = getXYZ(transformDataNode, 'attitude');
     const error = lastPredictNode
-      ? getAllErrorModel(nodes, lastPredictNode)
+      ? getAllErrorModel(transformDataNode, lastPredictNode)
       : false;
 
     return (
@@ -149,9 +152,9 @@ class Form extends Component {
         )}
 
         <div style={{ margin: '15px' }}>
-          <h1>{model || 'exponential'}</h1>
+          <h1>{model.replace(/^\w/, c => c.toUpperCase()) || 'Exponential'}</h1>
           <div>
-            <h1>select model</h1>
+            <h1>Model Selection</h1>
             <button onClick={this.handleChangeModel} value="exponential">
               Exponential Model
             </button>
@@ -162,19 +165,19 @@ class Form extends Component {
               Spherical Model
             </button>
             <button onClick={this.handleChangeModel} value="pentaspherical">
-              Pentaschericle Model
+              Pentaspherical Model
             </button>
             <button onClick={this.handleChangeModel} value="gaussian">
               Gussian Model
             </button>
           </div>
-          <h1>FORM NODE LIST</h1>
+          <h1>Node list</h1>
           <div className="input-node-title">
             <p className="node-p-id">ID</p>
             <p className="node-unit">Latitude</p>
             <p className="node-unit">Longtitude</p>
-            <p className="node-unit">Attitude</p>
-            <p className="node-unit">Predict Attitude</p>
+            <p className="node-unit">Altitude</p>
+            <p className="node-unit">Predict Altitude</p>
           </div>
           {transformDataNode.map(
             ({ id, latitude, longtitude, attitude, predictAttitude }) => (
@@ -211,7 +214,7 @@ class Form extends Component {
                     onChange={this.onChangeNode}
                     id={id}
                     name="predictAttitude"
-                    value={predictAttitude || ''}
+                    value={bestSumList ? predictAttitude[model] : ''}
                   ></input>
                 </div>
                 <div>
