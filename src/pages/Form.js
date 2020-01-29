@@ -3,13 +3,13 @@ import Plot from 'react-plotly.js';
 import memoize from 'fast-memoize';
 import { calCulateAttitude } from '../Utils/calBestAttitude';
 import Loader from 'react-loader-spinner';
-import { connect } from 'react-redux';
-import { getAllNode } from '../actions';
 import * as XLSX from 'xlsx';
 import getXYZ from '../Utils/getXYZ';
-import getStatError, { getAllErrorModel } from '../Utils/getStatError';
+import  { getAllErrorModel } from '../Utils/getStatError';
 import computePredict from '../Utils/computePredict';
 import createScatterGraph from '../Utils/createScatterGraph';
+import { Chart } from "react-google-charts";
+import getTrendlines from '../Utils/getTrendlines';
 
 const memoizeCalCulateAttitude = memoize(calCulateAttitude);
 class Form extends Component {
@@ -142,7 +142,23 @@ class Form extends Component {
     const error = lastPredictNode
       ? getAllErrorModel(transformDataNode, lastPredictNode)
       : false;
-
+    const trendlineData = lastPredictNode ? getTrendlines(allRangeOfNodes,semiVarioGram['exponential']) : []
+      const data =[
+        ['range', 'semivarian'],
+        ...trendlineData
+      ]
+      const options = {
+        title: 'Exponential Polynomial Trendlines',
+        legend: 'none',
+        crosshair: { trigger: 'both', orientation: 'both' },
+        trendlines: {
+          0: {
+            type: 'polynomial',
+            degree: 3,
+            visibleInLegend: true,
+          }
+        }
+      };
     return (
       <div className="container-graph">
         {loading && (
@@ -169,6 +185,9 @@ class Form extends Component {
             </button>
             <button onClick={this.handleChangeModel} value="gaussian">
               Gussian Model
+            </button>
+            <button onClick={this.handleChangeModel} value="trendline">
+              Trendline Model
             </button>
           </div>
           <h1>Node list</h1>
@@ -284,6 +303,14 @@ class Form extends Component {
                     <td>{error['gaussian'].meanSquareError}</td>
                     <td>{error['gaussian'].rootMeanSquareError}</td>
                   </tr>
+                  <tr>
+                    <td>Exponential Polynomial Trendline</td>
+                    <td>{error['trendline'].meanError}</td>
+                    <td>{error['trendline'].meanOfPercentageError}</td>
+                    <td>{error['trendline'].meanAbsoluteError}</td>
+                    <td>{error['trendline'].meanSquareError}</td>
+                    <td>{error['trendline'].rootMeanSquareError}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -323,6 +350,14 @@ class Form extends Component {
               layout={{ width: 900, height: 600, title: '3D Surface Plots' }}
             />
           ) : null}
+          {trendlineData.length > 0 &&(<Chart
+          chartType="ScatterChart"
+          width="900px"
+          height="600px"
+          data={data}
+          options={options}
+          legendToggle
+        />)}
         </div>
       </div>
     );

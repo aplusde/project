@@ -70,14 +70,15 @@ export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
   const errorOfPentaSpherical = calculateError(nodes,'pentaspherical');
 
   const errorOfGaussian = calculateError(nodes,'gaussian');
+  const errorOfTrendline = calculateError(nodes,'trendline');
 
   const result = {
     exponential: errorOfExponential,
     linear: errorOfLinear,
     sherical: errorOfSherical,
     pentaspherical: errorOfPentaSpherical,
-    gaussian: errorOfGaussian
+    gaussian: errorOfGaussian,
+    trendline: errorOfTrendline,
   };
-  console.log(result);
   return result;
 };

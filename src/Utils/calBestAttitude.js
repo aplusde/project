@@ -79,7 +79,7 @@ export const calCulateAttitude = (prod = []) => {
   // );
 
   const allRangeOfNodes = range.map(({ range }) => range);
-
+  console.log({x:allRangeOfNodes})
   const result = {
     bestSumList,
     bestSum: data.bestSum, //node attitue 31
@@ -128,7 +128,8 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: [],
     spherical: [],
     pentaspherical: [],
-    gaussian: []
+    gaussian: [],
+    trendline: [],
   };
 
   let bestNugget = {
@@ -136,7 +137,8 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0,
   };
 
   let bestSill = {
@@ -144,7 +146,8 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0
   };
 
   let bestRange = {
@@ -152,7 +155,8 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0,
   };
 
   let bestSum = {
@@ -160,11 +164,14 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0
   };
 
-  for (let i = 0; i < nuggetArray.length; i++) {
-     for (let j = 0; j < sillArray.length; j++) {
+  let i = 0;
+  let j = 0;
+  // for (let i = 0; i < nuggetArray.length; i++) {
+  //    for (let j = 0; j < sillArray.length; j++) {
       const vairiantNodeObject = tranformSemivariance(range)(
         +nuggetArray[0],
         +sillArray[0],
@@ -190,6 +197,22 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
         vairiantNodeObject,
         'gaussian'
       );
+      const modelTrendline = calBestAttitudeLastNode(
+        vairiantNodeObject,
+        'exponentialPolynomialTrendlines'
+      );
+
+      semiVarioGram['trendline'] = vairiantNodeObject.map(
+        ({exponentialPolynomialTrendlines}) => exponentialPolynomialTrendlines
+      )
+
+        minError['trendline'] = modelTrendline.errorPedictionModel;
+        bestRange['trendline'] = maxRange;
+        bestSum['trendline'] = modelTrendline.sum;
+        semiVarioGram['trendline'] = vairiantNodeObject.map(
+          ({ exponentialPolynomialTrendlines }) => exponentialPolynomialTrendlines
+        );
+
 
       if (minError['gaussian'] === 0) {
         minError['gaussian'] = modelGussian.errorPedictionModel;
@@ -302,9 +325,9 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
         semiVarioGram['exponential'] = vairiantNodeObject.map(
           ({ exponential }) => exponential
         );
-      }
-      /*exponential*/
-   }
+  //     }
+  //     /*exponential*/
+  //  }
   }
 
   return {
