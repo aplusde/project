@@ -28,7 +28,7 @@ td {
 
 li {
  list-style: none;
- display: inline; 
+ display: inline;
  margin: 15px;
  position: relative;
  top: 0;
@@ -41,4 +41,10 @@ li {
   to {
     transform: rotate(360deg);
   }
+}
+th {
+  font-size:12px;
+}
+td {
+  font-size: 12px;
 }
