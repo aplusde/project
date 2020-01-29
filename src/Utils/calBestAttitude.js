@@ -168,10 +168,8 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     trendline: 0
   };
 
-  let i = 0;
-  let j = 0;
-  // for (let i = 0; i < nuggetArray.length; i++) {
-  //    for (let j = 0; j < sillArray.length; j++) {
+  for (let i = 0; i < nuggetArray.length; i++) {
+     for (let j = 0; j < sillArray.length; j++) {
       const vairiantNodeObject = tranformSemivariance(range)(
         +nuggetArray[0],
         +sillArray[0],
@@ -325,9 +323,9 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
         semiVarioGram['exponential'] = vairiantNodeObject.map(
           ({ exponential }) => exponential
         );
-  //     }
-  //     /*exponential*/
-  //  }
+      }
+      /*exponential*/
+   }
   }
 
   return {

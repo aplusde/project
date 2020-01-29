@@ -16,13 +16,12 @@ class App extends Component {
     const value = e.target.value
     this.setState({
       name: value
-    }, () => console.log(this.state))
+    })
   }
   Handlealert = (name) => {
     return alert(name)
   }
   render() {
-    console.log('nodeList', this.props)
     return (
       <Router>
         <div className="App">
@@ -40,7 +39,6 @@ const mapStoreToProps = (store) => {
     nodeList:[],
   }
    */
-  console.log('state', store)
   return {
     nodesList: store.nodesList,
     user: store.user
