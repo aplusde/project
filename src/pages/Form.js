@@ -18,7 +18,12 @@ class Form extends Component {
     x: [],
     y: [],
     z: [],
-    loading: false
+    loading: false,
+    variable: {
+      nugget: '',
+      sill: '',
+      range: '',
+    }
   };
   addNode = () => {
     const { nodes } = this.state;
@@ -89,7 +94,7 @@ class Form extends Component {
   };
 
   onSubmit = () => {
-    const { nodes, loading } = this.state;
+    const { nodes, loading, variable } = this.state;
     this.setState({
       loading: !loading
     });
@@ -98,8 +103,8 @@ class Form extends Component {
         bestSumList,
         bestSum,
         allRangeOfNodes,
-        semiVarioGram
-      } = memoizeCalCulateAttitude(nodes);
+        semiVarioGram,
+      } = memoizeCalCulateAttitude(nodes, variable);
 
       let newNodesWithLastAttitude = nodes;
 
@@ -109,7 +114,7 @@ class Form extends Component {
         allRangeOfNodes,
         nodes: newNodesWithLastAttitude,
         semiVarioGram,
-        loading: false
+        loading: false,
       });
     }, 500);
   };
@@ -119,6 +124,16 @@ class Form extends Component {
       model: value
     });
   };
+  handleChangeValue = (e)=>{
+    const {name , value} = e.target
+    this.setState({
+      variable : {
+        ...this.state.variable,
+        [name]: value
+      }
+    })
+
+  }
   render() {
     const {
       nodes,
@@ -127,7 +142,8 @@ class Form extends Component {
       allRangeOfNodes,
       semiVarioGram,
       bestSumList = false,
-      model = 'exponential'
+      model = 'exponential',
+      variable,
     } = this.state;
     const transformDataNode = lastPredictNode // TODO: lastPredictNode
       ? computePredict(lastPredictNode[model], nodes, bestSumList)
@@ -189,8 +205,18 @@ class Form extends Component {
             <button onClick={this.handleChangeModel} value="trendline">
               Trendline Model
             </button>
+            <button onClick={this.handleChangeModel} value="exponentialWithKIteration">
+              Exponential with K iteration Model
+            </button>{
+              !!variable.nugget && !!variable.sill  && !!variable.range &&
+            (<button onClick={this.handleChangeModel} value="exponentialWithConstant">
+              Exponential with Constant
+            </button>)}
           </div>
           <h1>Node list</h1>
+          <input name="nugget" placeholder="nugget" onChange={this.handleChangeValue} />
+          <input name="sill" placeholder="sill"  onChange={this.handleChangeValue}/>
+          <input name="range" placeholder="range"  onChange={this.handleChangeValue}/>
           <div className="input-node-title">
             <p className="node-p-id">ID</p>
             <p className="node-unit">Latitude</p>
@@ -311,6 +337,23 @@ class Form extends Component {
                     <td>{error['trendline'].meanSquareError}</td>
                     <td>{error['trendline'].rootMeanSquareError}</td>
                   </tr>
+                  <tr>
+                    <td>Exponential with K iteration</td>
+                    <td>{error['exponentialWithKIteration'].meanError}</td>
+                    <td>{error['exponentialWithKIteration'].meanOfPercentageError}</td>
+                    <td>{error['exponentialWithKIteration'].meanAbsoluteError}</td>
+                    <td>{error['exponentialWithKIteration'].meanSquareError}</td>
+                    <td>{error['exponentialWithKIteration'].rootMeanSquareError}</td>
+                  </tr>
+                 {semiVarioGram['exponentialWithConstant'].length > 0 &&
+                 (<tr>
+                    <td>Exponential with Constant</td>
+                    <td>{error['exponentialWithConstant'].meanError}</td>
+                    <td>{error['exponentialWithConstant'].meanOfPercentageError}</td>
+                    <td>{error['exponentialWithConstant'].meanAbsoluteError}</td>
+                    <td>{error['exponentialWithConstant'].meanSquareError}</td>
+                    <td>{error['exponentialWithConstant'].rootMeanSquareError}</td>
+                 </tr>)}
                 </tbody>
               </table>
             </div>

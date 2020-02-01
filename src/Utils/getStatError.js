@@ -36,30 +36,6 @@ export const calculateError = (node = [],model='exponential') => {
 };
 
 export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
-  // node = [{ attitude , predictAttitude: {exponent, }}]
-  // const transformExponential = computePredict(
-  //   lastPredictNode['exponential'],
-  //   nodes
-  // );
-  // const transformLinear = computePredict(lastPredictNode['linear'], nodes);
-
-  // const transformSpherical = computePredict(
-  //   lastPredictNode['spherical'],
-  //   nodes
-  // );
-  // const transformPentaSpherical = computePredict(
-  //   lastPredictNode['pentaspherical'],
-  //   nodes
-  // );
-
-  // console.log({
-  //   transformExponential,
-  //   transformLinear,
-  //   transformSpherical,
-  //   transformPentaSpherical,
-  //   lastPredictNode
-  // });
-  // const transformGaussian = computePredict(lastPredictNode['gaussian'], nodes);
 
   const errorOfExponential = calculateError(nodes,'exponential');
 
@@ -70,7 +46,10 @@ export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
   const errorOfPentaSpherical = calculateError(nodes,'pentaspherical');
 
   const errorOfGaussian = calculateError(nodes,'gaussian');
-  const errorOfTrendline = calculateError(nodes,'trendline');
+  const errorOfTrendline = calculateError(nodes, 'trendline');
+
+  const errorOfExponentialWithKIteration = calculateError(nodes,'exponentialWithKIteration');
+  const errorOfExponentialWithConstant= calculateError(nodes,'exponentialWithConstant');
 
   const result = {
     exponential: errorOfExponential,
@@ -79,6 +58,8 @@ export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
     pentaspherical: errorOfPentaSpherical,
     gaussian: errorOfGaussian,
     trendline: errorOfTrendline,
+    exponentialWithKIteration: errorOfExponentialWithKIteration,
+    exponentialWithConstant: errorOfExponentialWithConstant
   };
   return result;
 };
