@@ -89,6 +89,19 @@ export default (node = []) => (NUGGET, SILL, RANGE) =>
             ];
           }
         }, []),
+        exponentialConstant: current.range.reduce((acc, rangeValue) => {
+          //model exponential
+          if (acc.length === current.range.length - 1) {
+            return [...acc, 1];
+          } else if (rangeValue === 0) {
+            return [...acc, rangeValue];
+          } else {
+            return [
+              ...acc,
+              NUGGET + SILL * (1 - Math.exp(-rangeValue / RANGE))
+            ];
+          }
+        }, []),
       }
     ];
   }, []);

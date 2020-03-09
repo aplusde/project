@@ -10,11 +10,11 @@ export const calculateError = (node = [],model='exponential') => {
       return acc + (predictAttitude[model] - attitude) / attitude;
     }, 0) / node.length;
 
-  const meanAbsoluteError = Math.abs(
+  const meanAbsoluteError = 
     node.reduce((acc, { predictAttitude, attitude }) => {
-      return acc + (predictAttitude[model] - attitude);
+      return acc + Math.abs((predictAttitude[model] - attitude));
     }, 0) / node.length
-  );
+  ;
 
   const meanSquareError =
     node.reduce((acc, { predictAttitude, attitude }) => {
@@ -50,7 +50,6 @@ export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
 
   const errorOfExponentialWithKIteration = calculateError(nodes,'exponentialWithKIteration');
   const errorOfExponentialWithConstant= calculateError(nodes,'exponentialWithConstant');
-
   const result = {
     exponential: errorOfExponential,
     linear: errorOfLinear,
