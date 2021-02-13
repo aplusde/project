@@ -4,55 +4,71 @@ import tranformSemivariance from './tranformSemivariance';
 import createMatrix from './createMatrix';
 import getStatError from './getStatError';
 
-export const calCulateAttitude = (prod = []) => {
-  console.log({ prod });
-  //TODO: prod -> nodes
-  let maxRange = 0;
-  const range = createRangeTable(prod);
-
+const arrayRotate = (arr=[]) =>{
+  let data = [];
+  for(let i = 0 ; i < arr.length ; i ++){
+     data[i]  = arr[i+1]
+     if(i===arr.length - 1){
+       data[i] = arr[0]
+     }
+  }
+  return data
+}
+const findMaxRange = (range=[])=>{
+  let max = 0
   range.map(({ range }) => {
     return range.map(v => {
-      if (v > maxRange) {
-        maxRange = v;
+      if (v > max) {
+        max = v;
       }
     });
   });
+  return max
+}
 
-  const rangeArray = [];
-
-  for (let i = 1; i <= 10; i++) {
-    rangeArray.push((i * maxRange) / 10);
+export const recursiveNode = (prod = [], variable ,temp = 0,tempResult = [])=>{
+  const rotateNodes = arrayRotate(prod) // rotate
+  let result = [];
+  if(rotateNodes[0].id === 1 ) {
+    const range = createRangeTable(rotateNodes); //cal range
+    let maxRange = findMaxRange(range) // max range
+    const data = calculateBestNuggetSillRange(range, maxRange, variable); //cal last node
+    result = [
+      ...tempResult,
+      data
+    ]
+    return  result
+  }else {
+      const range = createRangeTable(rotateNodes); //cal range
+      let maxRange = findMaxRange(range) // max range
+      const data = calculateBestNuggetSillRange(range, maxRange, variable); //cal last node
+      result = [
+        ...tempResult,
+        data
+      ]
+      return recursiveNode(rotateNodes, variable, temp += 1, result)
   }
+}
 
-  const data = calculateBestNuggetSillRange(range, maxRange);
+export const calCulateAttitude = (prod = [], variable) => {
 
-  const bestNugget = 0;
-  const bestSill = 0.1;
-  const vairiantNodeObject = tranformSemivariance(range)(
-    bestNugget,
-    bestSill,
-    maxRange
-  );
-
-  const modelexponential = calBestAttitudeLastNode(
-    vairiantNodeObject,
-    'exponential'
-  );
-
-  const modelLinear = calBestAttitudeLastNode(vairiantNodeObject, 'linear');
-  const modelSpherical = calBestAttitudeLastNode(
-    vairiantNodeObject,
-    'spherical'
-  );
+  const recursiveResult = recursiveNode(prod, variable, 0)
+  const bestSumList = recursiveResult.map(({bestSum})=>bestSum)
+  const range = createRangeTable(prod); //transform range for each node
+  let maxRange = findMaxRange(range)
+  const data = calculateBestNuggetSillRange(range, maxRange, variable);
 
   const allRangeOfNodes = range.map(({ range }) => range);
-
   const result = {
+    bestSumList,
     bestSum: data.bestSum, //node attitue 31
     allRangeOfNodes,
-    semiVarioGram: data.semiVarioGram
+    semiVarioGram: data.semiVarioGram,
+    error: data.minError,
+    bestNugget: data.bestNugget,
+    bestSill: data.bestSill,
+    bestRange: data.bestRange
   };
-
   return result;
 };
 
@@ -78,15 +94,19 @@ const calBestAttitudeLastNode = (vairiantNodeObject, model = 'exponential') => {
   };
 };
 
-const calculateBestNuggetSillRange = (range, maxRange) => {
+const calculateBestNuggetSillRange = (range, maxRange,variable) => {
   let nuggetArray = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]; //11 //10
   let sillArray = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]; //  10
+  let sillFromExponent = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
+
   let minError = {
     exponential: 0,
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    exponentialWithKIteration:0,
+    exponentialWithConstant: 0,
   };
 
   let semiVarioGram = {
@@ -94,7 +114,10 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: [],
     spherical: [],
     pentaspherical: [],
-    gaussian: []
+    gaussian: [],
+    trendline: [],
+    exponentialWithKIteration: [],
+    exponentialWithConstant: [],
   };
 
   let bestNugget = {
@@ -102,7 +125,10 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0,
+    exponentialWithKIteration: 0,
+    exponentialWithConstant: 0,
   };
 
   let bestSill = {
@@ -110,7 +136,10 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0,
+    exponentialWithKIteration: 0,
+    exponentialWithConstant: 0
   };
 
   let bestRange = {
@@ -118,7 +147,10 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0,
+    exponentialWithKIteration: 0,
+    exponentialWithConstant: 0,
   };
 
   let bestSum = {
@@ -126,16 +158,41 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
     linear: 0,
     spherical: 0,
     pentaspherical: 0,
-    gaussian: 0
+    gaussian: 0,
+    trendline: 0,
+    exponentialWithKIteration: 0,
+    exponentialWithConstant: 0
   };
 
   for (let i = 0; i < nuggetArray.length; i++) {
-    for (let j = 0; j < sillArray.length; j++) {
+     for (let j = 0; j < sillArray.length; j++) {
       const vairiantNodeObject = tranformSemivariance(range)(
         +nuggetArray[i],
         +sillArray[j],
         maxRange
       );
+
+      if(!!variable.nugget && !!variable.sill && !!variable.range){
+        const vairiantNodeObjectConstant = tranformSemivariance(range)(
+          Number(variable.nugget),
+          Number(variable.sill),
+          Number(variable.range)
+        )
+
+        const modelExponentialWithContant = calBestAttitudeLastNode(
+          vairiantNodeObjectConstant,
+          'exponential'
+        );
+
+        minError['exponentialWithConstant'] = modelExponentialWithContant.errorPedictionModel;
+        bestNugget['exponentialWithConstant'] = variable.nugget
+        bestSill['exponentialWithConstant'] = variable.sill
+        bestRange['exponentialWithConstant'] = variable.range;
+        bestSum['exponentialWithConstant'] = modelExponentialWithContant.sum;
+        semiVarioGram['exponentialWithConstant'] = vairiantNodeObjectConstant.map(
+          ({ exponential }) => exponential
+        );
+      }
 
       const modelExponential = calBestAttitudeLastNode(
         vairiantNodeObject,
@@ -156,6 +213,50 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
         vairiantNodeObject,
         'gaussian'
       );
+      const modelTrendline = calBestAttitudeLastNode(
+        vairiantNodeObject,
+        'exponentialPolynomialTrendlines'
+      );
+
+      minError['trendline'] = modelTrendline.errorPedictionModel;
+      bestRange['trendline'] = maxRange;
+      bestSum['trendline'] = modelTrendline.sum;
+      semiVarioGram['trendline'] = vairiantNodeObject.map(
+        ({ exponentialPolynomialTrendlines }) => exponentialPolynomialTrendlines
+      );
+
+      const ExponentialVairiantWithSubSill = tranformSemivariance(range)(
+        +nuggetArray[i],
+        +sillFromExponent[j],
+        maxRange
+      );
+
+      const modelExponentialWithKIteration = calBestAttitudeLastNode(
+        ExponentialVairiantWithSubSill,
+        'exponential'
+      );
+
+      if (minError['exponentialWithKIteration'] === 0) {
+        minError['exponentialWithKIteration'] = modelExponentialWithKIteration.errorPedictionModel;
+        bestNugget['exponentialWithKIteration'] = nuggetArray[i];
+        bestSill['exponentialWithKIteration'] = sillFromExponent[j];
+        bestRange['exponentialWithKIteration'] = maxRange;
+        bestSum['exponentialWithKIteration'] = modelExponentialWithKIteration.sum;
+        semiVarioGram['exponentialWithKIteration'] = ExponentialVairiantWithSubSill.map(
+          ({ exponential }) => exponential
+        );
+      }
+
+      if (modelExponentialWithKIteration.errorPedictionModel < minError['exponentialWithKIteration']) {
+        minError['exponentialWithKIteration'] = modelExponentialWithKIteration.errorPedictionModel;
+        bestNugget['exponentialWithKIteration'] = nuggetArray[i];
+        bestSill['exponentialWithKIteration'] = sillFromExponent[j];
+        bestRange['exponentialWithKIteration'] = maxRange;
+        bestSum['exponentialWithKIteration'] = modelExponentialWithKIteration.sum;
+        semiVarioGram['exponentialWithKIteration'] = ExponentialVairiantWithSubSill.map(
+          ({ exponential }) => exponential
+        );
+      }
 
       if (minError['gaussian'] === 0) {
         minError['gaussian'] = modelGussian.errorPedictionModel;
@@ -270,7 +371,7 @@ const calculateBestNuggetSillRange = (range, maxRange) => {
         );
       }
       /*exponential*/
-    }
+   }
   }
 
   return {

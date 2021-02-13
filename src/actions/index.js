@@ -17,8 +17,6 @@ export const getAllNode = () => {
 
 export const addNode = (value) => {
     // know  latitude longtitude attitude for calculate best nugget sill range
-    const { longtitude, latitude, attitude } = value
-    console.log(value)
     return async dispatch => {
         const response = await axios.post(`${BASE_URL}/node/create-with-attitude`, value)
         return dispatch({
@@ -35,7 +33,6 @@ export const addNode = (value) => {
 export const addvariogram = (value) => {
     return async dispatch => {
         const response = await axios.post(`${BASE_URL}/semivariogram/create`, value)
-        console.log('test', response.data)
         return dispatch({
             type: GET_ALL_PREDICT,
             payload: response.data //[]

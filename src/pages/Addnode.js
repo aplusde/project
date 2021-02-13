@@ -11,7 +11,7 @@ class Addnode extends Component {
         const { name, value } = e.target
         this.setState({
             [name]: value
-        }, () => console.log(this.state))
+        })
 
     }
     onSubmit = () => {

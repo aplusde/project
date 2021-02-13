@@ -17,7 +17,7 @@ code {
 .container-graph{
   display: flex;
   justify-content: space-between;
-  
+
 }
 
 .modal {
@@ -69,4 +69,7 @@ input {
 }
 .input-node-title  p  {
     margin-right:15px;
+}
+.td {
+  font-size: 12px;
 }
