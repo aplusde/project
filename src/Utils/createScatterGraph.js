@@ -1,5 +1,5 @@
-export default (allRangeOfNodes, semiVarioGram, model = 'exponential') => {
-  let scatterGraph = new Array();
+export default (allRangeOfNodes, semiVarioGram, model = "exponential") => {
+  let scatterGraph = [];
   for (let i = 0; i < allRangeOfNodes.length - 1; i++) {
     allRangeOfNodes[i].pop();
     semiVarioGram[model][i].pop();
@@ -8,9 +8,9 @@ export default (allRangeOfNodes, semiVarioGram, model = 'exponential') => {
     scatterGraph.push({
       x: range,
       y: semi,
-      mode: 'markers',
+      mode: "markers",
       name: `Node ${i + 1}`,
-      type: 'scatter'
+      type: "scatter",
     });
   }
   return scatterGraph;
