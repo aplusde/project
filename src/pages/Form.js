@@ -14,6 +14,7 @@ import { Chart } from "react-google-charts";
 import getTrendlines from "../Utils/getTrendlines";
 // import { separatePoint } from "../Utils/separatePoint";
 import ErrorTable from "../components/ErrorTable";
+import NodeResultTable from "../components/NodeResultTable";
 
 const memoizeCalCulateAttitude = memoize(calCulateAttitude);
 class Form extends Component {
@@ -245,6 +246,7 @@ class Form extends Component {
             <p className="node-unit">Altitude</p>
             <p className="node-unit">Predicted Altitude</p>
           </div>
+
           {transformDataNode.map(
             ({ id, latitude, longtitude, attitude, predictAttitude }) => (
               <div key={id + latitude.toString()} className="input-node">
@@ -298,6 +300,16 @@ class Form extends Component {
           {error && (
             <>
               <ErrorTable error={error} semiVarioGram={semiVarioGram} />
+
+              <NodeResultTable list={transformDataNode} />
+              <ReactHTMLTableToExcel
+                id="table-calculate-node-result"
+                className="download-table-xls-button"
+                table="table-calculate-node-result"
+                filename="prediction_calculate_result"
+                sheet="prediction_calculate_result"
+                buttonText="Download as prediction"
+              />
               <ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="download-table-xls-button"
