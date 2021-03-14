@@ -245,10 +245,6 @@ const calculateBestNuggetSillRange = (range, maxRange, variable) => {
         ExponentialVairiantWithSubSill,
         "exponential"
       );
-      const modelTrendline = calBestAttitudeLastNode(
-        vairiantNodeObject,
-        "exponentialPolynomialTrendlines"
-      );
 
       semiVarioGram["trendline"] = vairiantNodeObject.map(
         ({ exponentialPolynomialTrendlines }) => exponentialPolynomialTrendlines
