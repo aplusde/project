@@ -1,29 +1,34 @@
-import React, { Component } from 'react';
-import Plot from 'react-plotly.js';
-import memoize from 'fast-memoize';
-import { calCulateAttitude } from '../Utils/calBestAttitude';
-import Loader from 'react-loader-spinner';
-import * as XLSX from 'xlsx';
-import getXYZ from '../Utils/getXYZ';
-import  { getAllErrorModel } from '../Utils/getStatError';
-import computePredict from '../Utils/computePredict';
-import createScatterGraph from '../Utils/createScatterGraph';
+import React, { Component } from "react";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+
+import Plot from "react-plotly.js";
+import memoize from "fast-memoize";
+import { calCulateAttitude } from "../Utils/calBestAttitude";
+import Loader from "react-loader-spinner";
+import * as XLSX from "xlsx";
+import getXYZ from "../Utils/getXYZ";
+import { getAllErrorModel } from "../Utils/getStatError";
+import computePredict from "../Utils/computePredict";
+import createScatterGraph from "../Utils/createScatterGraph";
 import { Chart } from "react-google-charts";
-import getTrendlines from '../Utils/getTrendlines';
+import getTrendlines from "../Utils/getTrendlines";
+// import { separatePoint } from "../Utils/separatePoint";
+import ErrorTable from "../components/ErrorTable";
+import NodeResultTable from "../components/NodeResultTable";
 
 const memoizeCalCulateAttitude = memoize(calCulateAttitude);
 class Form extends Component {
   state = {
-    nodes: [{ id: 1, latitude: '', longtitude: '', attitude: '' }],
+    nodes: [{ id: 1, latitude: "", longtitude: "", attitude: "" }],
     x: [],
     y: [],
     z: [],
     loading: false,
     variable: {
-      nugget: '',
-      sill: '',
-      range: '',
-    }
+      nugget: "",
+      sill: "",
+      range: "",
+    },
   };
   addNode = () => {
     const { nodes } = this.state;
@@ -33,22 +38,20 @@ class Form extends Component {
         ...nodes,
         {
           id: id,
-          latitude: '',
-          longtitude: '',
-          attitude: ''
-        }
-      ]
+          latitude: "",
+          longtitude: "",
+          attitude: "",
+        },
+      ],
     });
   };
-  onChangeFile = e => {
+  onChangeFile = (e) => {
     const file = e.target.files[0];
-    var name = file.name;
     const reader = new FileReader();
-    let dataRetrive;
-    reader.onload = evt => {
+    reader.onload = (evt) => {
       /* Parse data */
       const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wb = XLSX.read(bstr, { type: "binary" });
       /* Get first worksheet */
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
@@ -64,39 +67,39 @@ class Form extends Component {
             latitude: next[0], //x
             longtitude: next[1], //y
             attitude: next[2], //z
-            predictAttitude: next[3] //p
-          }
+            predictAttitude: next[3], //p
+          },
         ];
       }, []);
       this.setState({
-        nodes: transformDataNode
+        nodes: transformDataNode,
       });
     };
     reader.readAsBinaryString(file);
   };
-  onChangeNode = e => {
+  onChangeNode = (e) => {
     const { nodes } = this.state;
     const { id, name, value } = e.target;
     const temp = nodes;
     temp[id - 1][name] = value;
     this.setState({
-      nodes: temp
+      nodes: temp,
     });
   };
-  deleteNodes = e => {
+  deleteNodes = (e) => {
     const { nodes } = this.state;
     const { id } = e.target;
     const nodeIdTarget = parseInt(id);
     const updateDeleteNode = nodes.filter(({ id }) => id !== nodeIdTarget);
     this.setState({
-      nodes: updateDeleteNode
+      nodes: updateDeleteNode,
     });
   };
 
   onSubmit = () => {
     const { nodes, loading, variable } = this.state;
     this.setState({
-      loading: !loading
+      loading: !loading,
     });
     setTimeout(() => {
       const {
@@ -118,22 +121,21 @@ class Form extends Component {
       });
     }, 500);
   };
-  handleChangeModel = e => {
+  handleChangeModel = (e) => {
     const value = e.target.value;
     this.setState({
-      model: value
+      model: value,
     });
   };
-  handleChangeValue = (e)=>{
-    const {name , value} = e.target
+  handleChangeValue = (e) => {
+    const { name, value } = e.target;
     this.setState({
-      variable : {
+      variable: {
         ...this.state.variable,
-        [name]: value
-      }
-    })
-
-  }
+        [name]: value,
+      },
+    });
+  };
   render() {
     const {
       nodes,
@@ -142,7 +144,7 @@ class Form extends Component {
       allRangeOfNodes,
       semiVarioGram,
       bestSumList = false,
-      model = 'exponential',
+      model = "exponential",
       variable,
     } = this.state;
     const transformDataNode = lastPredictNode // TODO: lastPredictNode
@@ -152,29 +154,28 @@ class Form extends Component {
     const scatterGraph = lastPredictNode
       ? createScatterGraph(allRangeOfNodes, semiVarioGram, model)
       : false;
-    const x = getXYZ(transformDataNode, 'latitude');
-    const y = getXYZ(transformDataNode, 'longtitude');
-    const z = getXYZ(transformDataNode, 'attitude');
+    const x = getXYZ(transformDataNode, "latitude");
+    const y = getXYZ(transformDataNode, "longtitude");
+    const z = getXYZ(transformDataNode, "attitude");
     const error = lastPredictNode
       ? getAllErrorModel(transformDataNode, lastPredictNode)
       : false;
-    const trendlineData = lastPredictNode ? getTrendlines(allRangeOfNodes,semiVarioGram['exponential']) : []
-      const data =[
-        ['range', 'semivarian'],
-        ...trendlineData
-      ]
-      const options = {
-        title: 'Exponential Polynomial Trendlines',
-        legend: 'none',
-        crosshair: { trigger: 'both', orientation: 'both' },
-        trendlines: {
-          0: {
-            type: 'polynomial',
-            degree: 3,
-            visibleInLegend: true,
-          }
-        }
-      };
+    const trendlineData = lastPredictNode
+      ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"])
+      : [];
+    const data = [["range", "semivarian"], ...trendlineData];
+    const options = {
+      title: "Exponential Polynomial Trendlines",
+      legend: "none",
+      crosshair: { trigger: "both", orientation: "both" },
+      trendlines: {
+        0: {
+          type: "polynomial",
+          degree: 3,
+          visibleInLegend: true,
+        },
+      },
+    };
     return (
       <div className="container-graph">
         {loading && (
@@ -183,8 +184,10 @@ class Form extends Component {
           </div>
         )}
 
-        <div style={{ margin: '15px' }}>
-          <h1>{model.replace(/^\w/, c => c.toUpperCase()) || 'Exponential'}</h1>
+        <div style={{ margin: "15px" }}>
+          <h1>
+            {model.replace(/^\w/, (c) => c.toUpperCase()) || "Exponential"}
+          </h1>
           <div>
             <h1>Model Selection</h1>
             <button onClick={this.handleChangeModel} value="exponential">
@@ -205,18 +208,37 @@ class Form extends Component {
             <button onClick={this.handleChangeModel} value="trendline">
               Trendline Model
             </button>
-            <button onClick={this.handleChangeModel} value="exponentialWithKIteration">
+            <button
+              onClick={this.handleChangeModel}
+              value="exponentialWithKIteration"
+            >
               Exponential with K iteration Model
-            </button>{
-              !!variable.nugget && !!variable.sill  && !!variable.range &&
-            (<button onClick={this.handleChangeModel} value="exponentialWithConstant">
-              Exponential with Constant
-            </button>)}
+            </button>
+            {!!variable.nugget && !!variable.sill && !!variable.range && (
+              <button
+                onClick={this.handleChangeModel}
+                value="exponentialWithConstant"
+              >
+                Exponential with Constant
+              </button>
+            )}
           </div>
           <h1>Node list</h1>
-          <input name="nugget" placeholder="nugget" onChange={this.handleChangeValue} />
-          <input name="sill" placeholder="sill"  onChange={this.handleChangeValue}/>
-          <input name="range" placeholder="range"  onChange={this.handleChangeValue}/>
+          <input
+            name="nugget"
+            placeholder="nugget"
+            onChange={this.handleChangeValue}
+          />
+          <input
+            name="sill"
+            placeholder="sill"
+            onChange={this.handleChangeValue}
+          />
+          <input
+            name="range"
+            placeholder="range"
+            onChange={this.handleChangeValue}
+          />
           <div className="input-node-title">
             <p className="node-p-id">ID</p>
             <p className="node-unit">Latitude</p>
@@ -224,6 +246,7 @@ class Form extends Component {
             <p className="node-unit">Altitude</p>
             <p className="node-unit">Predicted Altitude</p>
           </div>
+
           {transformDataNode.map(
             ({ id, latitude, longtitude, attitude, predictAttitude }) => (
               <div key={id + latitude.toString()} className="input-node">
@@ -233,25 +256,22 @@ class Form extends Component {
                 <div>
                   <input
                     onChange={this.onChangeNode}
-                    id={id}
                     name="latitude"
-                    value={latitude || ''}
+                    value={latitude || ""}
                   ></input>
                 </div>
                 <div>
                   <input
                     onChange={this.onChangeNode}
-                    id={id}
                     name="longtitude"
-                    value={longtitude || ''}
+                    value={longtitude || ""}
                   ></input>
                 </div>
                 <div>
                   <input
                     onChange={this.onChangeNode}
-                    id={id}
                     name="attitude"
-                    value={attitude || ''}
+                    value={attitude || ""}
                   ></input>
                 </div>
                 <div>
@@ -259,7 +279,7 @@ class Form extends Component {
                     onChange={this.onChangeNode}
                     id={id}
                     name="predictAttitude"
-                    value={bestSumList ? predictAttitude[model] : ''}
+                    value={bestSumList ? predictAttitude[model] : ""}
                   ></input>
                 </div>
                 <div>
@@ -278,85 +298,27 @@ class Form extends Component {
 
         <div className="graph">
           {error && (
-            <div>
-              <table>
-                <thead>
-                  <th>Model</th>
-                  <th>Mean Error</th>
-                  <th>Mean of Percentage Error</th>
-                  <th>Mean Absolute Error</th>
-                  <th>Mean Squre Error</th>
-                  <th>Root Mean Squre Error</th>
-                </thead>
-                <tbody style={{ textAlign: 'center' }}>
-                  <tr>
-                    <td>Exponential</td>
-                    <td>{error['exponential'].meanError}</td>
-                    <td>{error['exponential'].meanOfPercentageError}</td>
-                    <td>{error['exponential'].meanAbsoluteError}</td>
-                    <td>{error['exponential'].meanSquareError}</td>
-                    <td>{error['exponential'].rootMeanSquareError}</td>
-                  </tr>
-                  <tr>
-                    <td>Linear</td>
-                    <td>{error['linear'].meanError}</td>
-                    <td>{error['linear'].meanOfPercentageError}</td>
-                    <td>{error['linear'].meanAbsoluteError}</td>
-                    <td>{error['linear'].meanSquareError}</td>
-                    <td>{error['linear'].rootMeanSquareError}</td>
-                  </tr>
-                  <tr>
-                    <td>Spherical</td>
-                    <td>{error['sherical'].meanError}</td>
-                    <td>{error['sherical'].meanOfPercentageError}</td>
-                    <td>{error['sherical'].meanAbsoluteError}</td>
-                    <td>{error['sherical'].meanSquareError}</td>
-                    <td>{error['sherical'].rootMeanSquareError}</td>
-                  </tr>
-                  <tr>
-                    <td>Pentaspherical</td>
-                    <td>{error['pentaspherical'].meanError}</td>
-                    <td>{error['pentaspherical'].meanOfPercentageError}</td>
-                    <td>{error['pentaspherical'].meanAbsoluteError}</td>
-                    <td>{error['pentaspherical'].meanSquareError}</td>
-                    <td>{error['pentaspherical'].rootMeanSquareError}</td>
-                  </tr>
-                  <tr>
-                    <td>Guassian</td>
-                    <td>{error['gaussian'].meanError}</td>
-                    <td>{error['gaussian'].meanOfPercentageError}</td>
-                    <td>{error['gaussian'].meanAbsoluteError}</td>
-                    <td>{error['gaussian'].meanSquareError}</td>
-                    <td>{error['gaussian'].rootMeanSquareError}</td>
-                  </tr>
-                  <tr>
-                    <td>Exponential Polynomial Trendline</td>
-                    <td>{error['trendline'].meanError}</td>
-                    <td>{error['trendline'].meanOfPercentageError}</td>
-                    <td>{error['trendline'].meanAbsoluteError}</td>
-                    <td>{error['trendline'].meanSquareError}</td>
-                    <td>{error['trendline'].rootMeanSquareError}</td>
-                  </tr>
-                  <tr>
-                    <td>Exponential with K iteration</td>
-                    <td>{error['exponentialWithKIteration'].meanError}</td>
-                    <td>{error['exponentialWithKIteration'].meanOfPercentageError}</td>
-                    <td>{error['exponentialWithKIteration'].meanAbsoluteError}</td>
-                    <td>{error['exponentialWithKIteration'].meanSquareError}</td>
-                    <td>{error['exponentialWithKIteration'].rootMeanSquareError}</td>
-                  </tr>
-                 {semiVarioGram['exponentialWithConstant'].length > 0 &&
-                 (<tr>
-                    <td>Exponential with Constant</td>
-                    <td>{error['exponentialWithConstant'].meanError}</td>
-                    <td>{error['exponentialWithConstant'].meanOfPercentageError}</td>
-                    <td>{error['exponentialWithConstant'].meanAbsoluteError}</td>
-                    <td>{error['exponentialWithConstant'].meanSquareError}</td>
-                    <td>{error['exponentialWithConstant'].rootMeanSquareError}</td>
-                 </tr>)}
-                </tbody>
-              </table>
-            </div>
+            <>
+              <ErrorTable error={error} semiVarioGram={semiVarioGram} />
+
+              <NodeResultTable list={transformDataNode} />
+              <ReactHTMLTableToExcel
+                id="table-calculate-node-result"
+                className="download-table-xls-button"
+                table="table-calculate-node-result"
+                filename="prediction_calculate_result"
+                sheet="prediction_calculate_result"
+                buttonText="Download as prediction"
+              />
+              <ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="download-table-xls-button"
+                table="error-table"
+                filename="errorSheet"
+                sheet="ErrorSheetxls"
+                buttonText="Download as XLS"
+              />
+            </>
           )}
           {scatterGraph && (
             <Plot
@@ -364,13 +326,13 @@ class Form extends Component {
               layout={{
                 width: 900,
                 height: 600,
-                title: 'Semivariogram Analysis',
+                title: "Semivariogram Analysis",
                 xaxis: {
-                  title: 'Distance'
+                  title: "Distance",
                 },
                 yaxis: {
-                  title: 'Semivariogram'
-                }
+                  title: "Semivariogram",
+                },
               }}
             />
           )}
@@ -381,26 +343,28 @@ class Form extends Component {
                   x: x,
                   y: y,
                   z: z,
-                  type: 'mesh3d'
+                  type: "mesh3d",
                   // intensity: [0, 0.33, 0.66, 10000000],
                   // colorscale: [
                   //     [0, 'rgb(255, 0, 0)'],
                   //     [0.5, 'rgb(0, 255, 0)'],
                   //     [10000000, 'rgb(0, 0, 255)']
                   // ]
-                }
+                },
               ]}
-              layout={{ width: 900, height: 600, title: '3D Surface Plots' }}
+              layout={{ width: 900, height: 600, title: "3D Surface Plots" }}
             />
           ) : null}
-          {trendlineData.length > 0 &&(<Chart
-          chartType="ScatterChart"
-          width="900px"
-          height="600px"
-          data={data}
-          options={options}
-          legendToggle
-        />)}
+          {trendlineData.length > 0 && (
+            <Chart
+              chartType="ScatterChart"
+              width="900px"
+              height="600px"
+              data={data}
+              options={options}
+              legendToggle
+            />
+          )}
         </div>
       </div>
     );

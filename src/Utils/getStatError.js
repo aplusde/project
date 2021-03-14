@@ -1,5 +1,4 @@
-
-export const calculateError = (node = [],model='exponential') => {
+export const calculateError = (node = [], model = "exponential") => {
   const meanError =
     node.reduce((acc, { predictAttitude, attitude }) => {
       return acc + (predictAttitude[model] - attitude);
@@ -10,12 +9,10 @@ export const calculateError = (node = [],model='exponential') => {
       return acc + (predictAttitude[model] - attitude) / attitude;
     }, 0) / node.length;
 
-  const meanAbsoluteError = 
+  const meanAbsoluteError =
     node.reduce((acc, { predictAttitude, attitude }) => {
-      return acc + Math.abs((predictAttitude[model] - attitude));
-    }, 0) / node.length
-  ;
-
+      return acc + Math.abs(predictAttitude[model] - attitude);
+    }, 0) / node.length;
   const meanSquareError =
     node.reduce((acc, { predictAttitude, attitude }) => {
       return acc + Math.pow(predictAttitude[model] - attitude, 2);
@@ -31,25 +28,30 @@ export const calculateError = (node = [],model='exponential') => {
     meanOfPercentageError,
     meanAbsoluteError,
     meanSquareError,
-    rootMeanSquareError
+    rootMeanSquareError,
   };
 };
 
 export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
+  const errorOfExponential = calculateError(nodes, "exponential");
 
-  const errorOfExponential = calculateError(nodes,'exponential');
+  const errorOfLinear = calculateError(nodes, "linear");
 
-  const errorOfLinear = calculateError(nodes,'linear');
+  const errorOfSherical = calculateError(nodes, "spherical");
 
-  const errorOfSherical = calculateError(nodes,'spherical');
+  const errorOfPentaSpherical = calculateError(nodes, "pentaspherical");
 
-  const errorOfPentaSpherical = calculateError(nodes,'pentaspherical');
+  const errorOfGaussian = calculateError(nodes, "gaussian");
+  const errorOfTrendline = calculateError(nodes, "trendline");
 
-  const errorOfGaussian = calculateError(nodes,'gaussian');
-  const errorOfTrendline = calculateError(nodes, 'trendline');
-
-  const errorOfExponentialWithKIteration = calculateError(nodes,'exponentialWithKIteration');
-  const errorOfExponentialWithConstant= calculateError(nodes,'exponentialWithConstant');
+  const errorOfExponentialWithKIteration = calculateError(
+    nodes,
+    "exponentialWithKIteration"
+  );
+  const errorOfExponentialWithConstant = calculateError(
+    nodes,
+    "exponentialWithConstant"
+  );
   const result = {
     exponential: errorOfExponential,
     linear: errorOfLinear,
@@ -58,7 +60,7 @@ export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
     gaussian: errorOfGaussian,
     trendline: errorOfTrendline,
     exponentialWithKIteration: errorOfExponentialWithKIteration,
-    exponentialWithConstant: errorOfExponentialWithConstant
+    exponentialWithConstant: errorOfExponentialWithConstant,
   };
   return result;
 };
