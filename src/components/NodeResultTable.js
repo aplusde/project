@@ -9,7 +9,7 @@ const NodeResultTable = ({ list }) => {
     "trendline",
   ];
   return (
-    <table id="table-calculate-node-result">
+    <table id="table-calculate-node-result" style={{ display: "none" }}>
       <thead>
         <tr>
           <th>latitude</th>
