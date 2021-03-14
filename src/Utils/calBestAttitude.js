@@ -176,8 +176,8 @@ const calculateBestNuggetSillRange = (range, maxRange, variable) => {
   for (let i = 0; i < nuggetArray.length; i++) {
     for (let j = 0; j < sillArray.length; j++) {
       const vairiantNodeObject = tranformSemivariance(range)(
-        +nuggetArray[i],
-        +sillArray[j],
+        +nuggetArray[0],
+        +sillArray[0],
         maxRange
       );
 
@@ -244,6 +244,21 @@ const calculateBestNuggetSillRange = (range, maxRange, variable) => {
       const modelExponentialWithKIteration = calBestAttitudeLastNode(
         ExponentialVairiantWithSubSill,
         "exponential"
+      );
+      const modelTrendline = calBestAttitudeLastNode(
+        vairiantNodeObject,
+        "exponentialPolynomialTrendlines"
+      );
+
+      semiVarioGram["trendline"] = vairiantNodeObject.map(
+        ({ exponentialPolynomialTrendlines }) => exponentialPolynomialTrendlines
+      );
+
+      minError["trendline"] = modelTrendline.errorPedictionModel;
+      bestRange["trendline"] = maxRange;
+      bestSum["trendline"] = modelTrendline.sum;
+      semiVarioGram["trendline"] = vairiantNodeObject.map(
+        ({ exponentialPolynomialTrendlines }) => exponentialPolynomialTrendlines
       );
 
       if (minError["exponentialWithKIteration"] === 0) {
