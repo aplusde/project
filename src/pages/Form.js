@@ -295,7 +295,7 @@ class Form extends Component {
           <button onClick={this.addNode}>ADD NODE</button>
           <button onClick={this.onSubmit}>Submit</button>
           {error && (
-            <>
+            <div className="wrapper-export-excel">
               <ReactHTMLTableToExcel
                 id="table-calculate-node-result"
                 className="download-table-xls-button"
@@ -312,7 +312,7 @@ class Form extends Component {
                 sheet="ErrorSheetxls"
                 buttonText="Download as errors report"
               />
-            </>
+            </div>
           )}
         </div>
 
