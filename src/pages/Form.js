@@ -297,7 +297,7 @@ class Form extends Component {
           {error && (
             <div className="wrapper-export-excel">
               <ReactHTMLTableToExcel
-                id="table-calculate-node-result"
+                id="table-calculate-node-result-button"
                 className="download-table-xls-button"
                 table="table-calculate-node-result"
                 filename="prediction_calculate_result"
