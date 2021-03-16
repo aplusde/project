@@ -10,18 +10,13 @@ export default (prod = []) => {
         range: prod.reduce((acc, next) => {
           return [
             ...acc,
-            Math.sqrt(Math.pow(current.latitude - next.latitude, 2) + Math.pow(current.longtitude - next.longtitude, 2))
-          ]
-        }, [])
-      }
-    ]
-  }, [])
-}
-// [
-//   {
-//     range:
-//   },
-//   {
-//     range:
-//   }
-// ]
+            Math.sqrt(
+              Math.pow(current.latitude - next.latitude, 2) +
+                Math.pow(current.longtitude - next.longtitude, 2)
+            ),
+          ];
+        }, []),
+      },
+    ];
+  }, []);
+};
