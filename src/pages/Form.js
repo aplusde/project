@@ -77,9 +77,9 @@ class Form extends Component {
     };
     reader.readAsBinaryString(file);
   };
-  onChangeNode = (e) => {
+  onChangeNode = (id)=>(e) => {
     const { nodes } = this.state;
-    const { id, name, value } = e.target;
+    const { name, value } = e.target;
     const temp = nodes;
     temp[id - 1][name] = value;
     this.setState({
@@ -255,29 +255,28 @@ class Form extends Component {
                 </div>
                 <div>
                   <input
-                    onChange={this.onChangeNode}
+                    onChange={this.onChangeNode(id)}
                     name="latitude"
                     value={latitude || ""}
                   ></input>
                 </div>
                 <div>
                   <input
-                    onChange={this.onChangeNode}
+                    onChange={this.onChangeNode(id)}
                     name="longtitude"
                     value={longtitude || ""}
                   ></input>
                 </div>
                 <div>
                   <input
-                    onChange={this.onChangeNode}
+                    onChange={this.onChangeNode(id)}
                     name="attitude"
                     value={attitude || ""}
                   ></input>
                 </div>
                 <div>
                   <input
-                    onChange={this.onChangeNode}
-                    id={id}
+                    onChange={this.onChangeNode(id)}
                     name="predictAttitude"
                     value={bestSumList ? predictAttitude[model] : ""}
                   ></input>
