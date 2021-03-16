@@ -294,14 +294,8 @@ class Form extends Component {
           <input onChange={this.onChangeFile} type="file"></input>
           <button onClick={this.addNode}>ADD NODE</button>
           <button onClick={this.onSubmit}>Submit</button>
-        </div>
-
-        <div className="graph">
           {error && (
             <>
-              <ErrorTable error={error} semiVarioGram={semiVarioGram} />
-
-              <NodeResultTable list={transformDataNode} />
               <ReactHTMLTableToExcel
                 id="table-calculate-node-result"
                 className="download-table-xls-button"
@@ -316,8 +310,18 @@ class Form extends Component {
                 table="error-table"
                 filename="errorSheet"
                 sheet="ErrorSheetxls"
-                buttonText="Download as XLS"
+                buttonText="Download as errors report"
               />
+            </>
+          )}
+        </div>
+
+        <div className="graph">
+          {error && (
+            <>
+              <ErrorTable error={error} semiVarioGram={semiVarioGram} />
+
+              <NodeResultTable list={transformDataNode} />
             </>
           )}
           {scatterGraph && (

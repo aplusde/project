@@ -73,3 +73,7 @@ input {
 .td {
   font-size: 12px;
 }
+
+.download-table-xls-button {
+  margin: 0 16px;
+}
