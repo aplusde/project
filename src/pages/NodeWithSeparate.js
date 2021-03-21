@@ -16,9 +16,10 @@ import getTrendlines from "../Utils/getTrendlines";
 import ErrorTable from "../components/ErrorTable";
 import NodeResultTable from "../components/NodeResultTable";
 import { Link } from "react-router-dom";
+import { findCenter, separateZone } from "../Utils/separateNode";
 
 const memoizeCalCulateAttitude = memoize(calCulateAttitude);
-class Form extends Component {
+class NodeWithSeparate extends Component {
   state = {
     nodes: [{ id: 1, latitude: "", longtitude: "", attitude: "" }],
     x: [],
@@ -103,16 +104,24 @@ class Form extends Component {
     this.setState({
       loading: !loading,
     });
+    const center = findCenter(nodes);
+    const zone = separateZone(nodes, center);
+
     setTimeout(() => {
       const {
         bestSumList,
         bestSum,
         allRangeOfNodes,
         semiVarioGram,
-      } = memoizeCalCulateAttitude(nodes, variable);
+      } = memoizeCalCulateAttitude(zone[0], variable);
 
-      let newNodesWithLastAttitude = nodes;
-
+      let newNodesWithLastAttitude = zone[0];
+      console.log({
+        bestSumList,
+        bestSum,
+        allRangeOfNodes,
+        semiVarioGram,
+      });
       this.setState({
         bestSumList,
         lastPredictNode: bestSum,
@@ -377,4 +386,4 @@ class Form extends Component {
   }
 }
 
-export default Form;
+export default NodeWithSeparate;
