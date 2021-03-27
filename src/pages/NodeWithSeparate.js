@@ -8,7 +8,9 @@ import Loader from "react-loader-spinner";
 import * as XLSX from "xlsx";
 import getXYZ from "../Utils/getXYZ";
 import { getAllErrorModel } from "../Utils/getStatError";
-import computePredict from "../Utils/computePredict";
+import computePredict, {
+  computeSeparatePredict,
+} from "../Utils/computePredict";
 import createScatterGraph from "../Utils/createScatterGraph";
 import { Chart } from "react-google-charts";
 import getTrendlines from "../Utils/getTrendlines";
@@ -106,31 +108,43 @@ class NodeWithSeparate extends Component {
     });
     const center = findCenter(nodes);
     const zone = separateZone(nodes, center);
-
-    setTimeout(() => {
+    const key = Object.keys(zone);
+    const newNode = [];
+    // const semiVariGram = {}
+    for (let i = 0; i < key.length; i++) {
+      const selectedZone = zone[key[i]];
       const {
         bestSumList,
         bestSum,
         allRangeOfNodes,
         semiVarioGram,
-      } = memoizeCalCulateAttitude(zone[0], variable);
+      } = memoizeCalCulateAttitude(selectedZone, variable);
 
-      let newNodesWithLastAttitude = zone[0];
       console.log({
         bestSumList,
         bestSum,
         allRangeOfNodes,
         semiVarioGram,
       });
-      this.setState({
+      const listId = selectedZone.map(({ id }) => id);
+
+      const trasnformNodesWithPredict = computePredict(
+        selectedZone,
         bestSumList,
-        lastPredictNode: bestSum,
-        allRangeOfNodes,
-        nodes: newNodesWithLastAttitude,
-        semiVarioGram,
-        loading: false,
-      });
-    }, 500);
+        listId
+      );
+      newNode.push(...trasnformNodesWithPredict);
+    }
+
+    this.setState({
+      // bestSumList,
+      // lastPredictNode: bestSum,
+      // allRangeOfNodes,
+      // semiVarioGram,
+      nodes: newNode.sort((a, b) => a.id < b.id),
+      loading: false,
+    });
+    console.timeEnd("start");
   };
   handleChangeModel = (e) => {
     const value = e.target.value;
@@ -154,22 +168,26 @@ class NodeWithSeparate extends Component {
       lastPredictNode = false,
       allRangeOfNodes,
       semiVarioGram,
-      bestSumList = false,
       model = "exponential",
       variable,
     } = this.state;
-    const transformDataNode = lastPredictNode // TODO: lastPredictNode
-      ? computePredict(lastPredictNode[model], nodes, bestSumList)
-      : nodes;
-
+    const transformDataNode = nodes.sort((a, b) => {
+      if (a.id > b.id) {
+        return 1;
+      }
+      return -1;
+    });
     const scatterGraph = lastPredictNode
       ? createScatterGraph(allRangeOfNodes, semiVarioGram, model)
       : false;
     const x = getXYZ(transformDataNode, "latitude");
     const y = getXYZ(transformDataNode, "longtitude");
     const z = getXYZ(transformDataNode, "attitude");
-    const error = lastPredictNode
-      ? getAllErrorModel(transformDataNode, lastPredictNode)
+    const isAllNodeHavePredict = nodes.every(
+      ({ predictAttitude }) => predictAttitude !== undefined
+    );
+    const error = isAllNodeHavePredict
+      ? getAllErrorModel(transformDataNode)
       : false;
     const trendlineData = lastPredictNode
       ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"])
@@ -260,46 +278,48 @@ class NodeWithSeparate extends Component {
           </div>
 
           {transformDataNode.map(
-            ({ id, latitude, longtitude, attitude, predictAttitude }) => (
-              <div key={id + latitude.toString()} className="input-node">
-                <div className="id-node">
-                  <p>{id}</p>
+            ({ id, latitude, longtitude, attitude, predictAttitude }) => {
+              return (
+                <div key={id + latitude.toString()} className="input-node">
+                  <div className="id-node">
+                    <p>{id}</p>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="latitude"
+                      value={latitude || ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="longtitude"
+                      value={longtitude || ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="attitude"
+                      value={attitude || ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="predictAttitude"
+                      value={isAllNodeHavePredict ? predictAttitude[model] : ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <button id={id} onClick={this.deleteNodes}>
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="latitude"
-                    value={latitude || ""}
-                  ></input>
-                </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="longtitude"
-                    value={longtitude || ""}
-                  ></input>
-                </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="attitude"
-                    value={attitude || ""}
-                  ></input>
-                </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="predictAttitude"
-                    value={bestSumList ? predictAttitude[model] : ""}
-                  ></input>
-                </div>
-                <div>
-                  <button id={id} onClick={this.deleteNodes}>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            )
+              );
+            }
           )}
 
           <input onChange={this.onChangeFile} type="file"></input>
@@ -330,7 +350,11 @@ class NodeWithSeparate extends Component {
         <div className="graph">
           {error && (
             <>
-              <ErrorTable error={error} semiVarioGram={semiVarioGram} />
+              <ErrorTable
+                error={error}
+                semiVarioGram={semiVarioGram}
+                variable={variable}
+              />
 
               <NodeResultTable list={transformDataNode} />
             </>

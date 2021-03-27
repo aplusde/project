@@ -103,25 +103,24 @@ class Form extends Component {
     this.setState({
       loading: !loading,
     });
-    setTimeout(() => {
-      const {
-        bestSumList,
-        bestSum,
-        allRangeOfNodes,
-        semiVarioGram,
-      } = memoizeCalCulateAttitude(nodes, variable);
+    console.time("start");
+    const {
+      bestSumList,
+      bestSum,
+      allRangeOfNodes,
+      semiVarioGram,
+    } = memoizeCalCulateAttitude(nodes, variable);
+    let newNodesWithLastAttitude = nodes;
 
-      let newNodesWithLastAttitude = nodes;
-
-      this.setState({
-        bestSumList,
-        lastPredictNode: bestSum,
-        allRangeOfNodes,
-        nodes: newNodesWithLastAttitude,
-        semiVarioGram,
-        loading: false,
-      });
-    }, 500);
+    this.setState({
+      bestSumList,
+      lastPredictNode: bestSum,
+      allRangeOfNodes,
+      nodes: newNodesWithLastAttitude,
+      semiVarioGram,
+      loading: false,
+    });
+    console.timeEnd("start");
   };
   handleChangeModel = (e) => {
     const value = e.target.value;
@@ -321,7 +320,11 @@ class Form extends Component {
         <div className="graph">
           {error && (
             <>
-              <ErrorTable error={error} semiVarioGram={semiVarioGram} />
+              <ErrorTable
+                error={error}
+                semiVarioGram={semiVarioGram}
+                variable={variable}
+              />
 
               <NodeResultTable list={transformDataNode} />
             </>

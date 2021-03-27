@@ -1,5 +1,10 @@
 import React from "react";
-const ErrorTable = ({ error, semiVarioGram }) => {
+const ErrorTable = ({ error, semiVarioGram, variable }) => {
+  const isHaveNuggetSillRange = Object.keys(variable).length > 0;
+  const isHaveCalculateConstant = isHaveNuggetSillRange
+    ? true
+    : semiVarioGram && semiVarioGram.exponentialWithConstant;
+
   return (
     <div>
       <table id="error-table">
@@ -70,7 +75,7 @@ const ErrorTable = ({ error, semiVarioGram }) => {
             <td>{error["exponentialWithKIteration"].meanSquareError}</td>
             <td>{error["exponentialWithKIteration"].rootMeanSquareError}</td>
           </tr>
-          {semiVarioGram["exponentialWithConstant"].length > 0 && (
+          {isHaveCalculateConstant && (
             <tr>
               <td>Exponential with Constant</td>
               <td>{error["exponentialWithConstant"].meanError}</td>

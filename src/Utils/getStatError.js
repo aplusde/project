@@ -32,7 +32,7 @@ export const calculateError = (node = [], model = "exponential") => {
   };
 };
 
-export const getAllErrorModel = (nodes = [], lastPredictNode = []) => {
+export const getAllErrorModel = (nodes = []) => {
   const errorOfExponential = calculateError(nodes, "exponential");
 
   const errorOfLinear = calculateError(nodes, "linear");

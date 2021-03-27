@@ -35,7 +35,6 @@ export const recursiveNode = (
 ) => {
   const rotateNodes = arrayRotate(nodes); // rotate
   let result = [];
-  console.log({ nodes });
   if (temp === nodes.length) {
     const range = createRangeTable(rotateNodes); //cal range
     let maxRange = findMaxRange(range); // max range
