@@ -8,7 +8,7 @@ const NodeResultTable = ({ list }) => {
     "gaussian",
     "trendline",
     "exponentialWithKIteration",
-    "exponentialWithConstant"
+    "exponentialWithConstant",
   ];
   return (
     <table id="table-calculate-node-result" style={{ display: "none" }}>
