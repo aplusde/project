@@ -224,7 +224,7 @@ class NodeWithSeparate extends Component {
         )}
 
         <div style={{ margin: "15px" }}>
-          <Link to="/separate">To Separate node page</Link>
+          <Link to="/">To main page call allnode</Link>
           <h1>
             {model.replace(/^\w/, (c) => c.toUpperCase()) || "Exponential"}
           </h1>
