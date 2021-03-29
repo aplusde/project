@@ -42,3 +42,15 @@ export const computeSeparatePredict = (
   }, []);
   return nodeTransformPredict;
 };
+
+export const transformSemiVarioGramWithSeparateNode = (
+  resultSelectedValiogram,
+  tempSemiVarioGram
+) => {
+  const keys = Object.keys(resultSelectedValiogram);
+  const temp = tempSemiVarioGram;
+  for (let i = 0; i < keys.length; i++) {
+    temp[keys[i]] = [...temp[keys[i]], ...resultSelectedValiogram[keys[i]]];
+  }
+  return temp;
+};

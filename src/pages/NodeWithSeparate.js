@@ -9,7 +9,7 @@ import * as XLSX from "xlsx";
 import getXYZ from "../Utils/getXYZ";
 import { getAllErrorModel } from "../Utils/getStatError";
 import computePredict, {
-  computeSeparatePredict,
+  transformSemiVarioGramWithSeparateNode,
 } from "../Utils/computePredict";
 import createScatterGraph from "../Utils/createScatterGraph";
 import { Chart } from "react-google-charts";
@@ -110,22 +110,33 @@ class NodeWithSeparate extends Component {
     const zone = separateZone(nodes, center);
     const key = Object.keys(zone);
     const newNode = [];
-    // const semiVariGram = {}
+    const allRangeOfNodesTemp = [];
+    let semiVarioGramTemp = {
+      exponential: [],
+      exponentialWithConstant: [],
+      exponentialWithKIteration: [],
+      gaussian: [],
+      linear: [],
+      pentaspherical: [],
+      spherical: [],
+      trendline: [],
+    };
+
     for (let i = 0; i < key.length; i++) {
       const selectedZone = zone[key[i]];
       const {
         bestSumList,
-        bestSum,
         allRangeOfNodes,
         semiVarioGram,
       } = memoizeCalCulateAttitude(selectedZone, variable);
 
-      console.log({
-        bestSumList,
-        bestSum,
-        allRangeOfNodes,
+      semiVarioGramTemp = transformSemiVarioGramWithSeparateNode(
         semiVarioGram,
-      });
+        semiVarioGramTemp
+      );
+
+      allRangeOfNodesTemp.push(...allRangeOfNodes);
+
       const listId = selectedZone.map(({ id }) => id);
 
       const trasnformNodesWithPredict = computePredict(
@@ -137,10 +148,8 @@ class NodeWithSeparate extends Component {
     }
 
     this.setState({
-      // bestSumList,
-      // lastPredictNode: bestSum,
-      // allRangeOfNodes,
-      // semiVarioGram,
+      allRangeOfNodes: allRangeOfNodesTemp,
+      semiVarioGram: semiVarioGramTemp,
       nodes: newNode.sort((a, b) => a.id < b.id),
       loading: false,
     });
@@ -177,18 +186,19 @@ class NodeWithSeparate extends Component {
       }
       return -1;
     });
-    const scatterGraph = lastPredictNode
+    const isAllNodeHavePredict = nodes.every(
+      ({ predictAttitude }) => predictAttitude !== undefined
+    );
+    const scatterGraph = isAllNodeHavePredict
       ? createScatterGraph(allRangeOfNodes, semiVarioGram, model)
       : false;
     const x = getXYZ(transformDataNode, "latitude");
     const y = getXYZ(transformDataNode, "longtitude");
     const z = getXYZ(transformDataNode, "attitude");
-    const isAllNodeHavePredict = nodes.every(
-      ({ predictAttitude }) => predictAttitude !== undefined
-    );
     const error = isAllNodeHavePredict
       ? getAllErrorModel(transformDataNode)
       : false;
+
     const trendlineData = lastPredictNode
       ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"])
       : [];
@@ -375,7 +385,7 @@ class NodeWithSeparate extends Component {
               }}
             />
           )}
-          {lastPredictNode ? (
+          {isAllNodeHavePredict ? (
             <Plot
               data={[
                 {
