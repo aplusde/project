@@ -149,7 +149,7 @@ class Form extends Component {
       variable,
     } = this.state;
     const transformDataNode = lastPredictNode // TODO: lastPredictNode
-      ? computePredict(lastPredictNode[model], nodes, bestSumList)
+      ? computePredict(nodes, bestSumList)
       : nodes;
 
     const scatterGraph = lastPredictNode
