@@ -3,6 +3,7 @@ import createRangeTable from "./createRangeTable";
 import tranformSemivariance from "./tranformSemivariance";
 import createMatrix from "./createMatrix";
 import getStatError from "./getStatError";
+import { findCenter, separateZone } from "./separateNode";
 
 const arrayRotate = (arr = []) => {
   let data = [];
@@ -34,7 +35,7 @@ export const recursiveNode = (
 ) => {
   const rotateNodes = arrayRotate(nodes); // rotate
   let result = [];
-  if (rotateNodes[0].id === 1) {
+  if (temp === nodes.length) {
     const range = createRangeTable(rotateNodes); //cal range
     let maxRange = findMaxRange(range); // max range
     const data = calculateBestNuggetSillRange(range, maxRange, variable); //cal last node

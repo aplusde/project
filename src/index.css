@@ -73,3 +73,9 @@ input {
 .td {
   font-size: 12px;
 }
+.wrapper-export-excel {
+  margin: 0 -16px;
+}
+.download-table-xls-button {
+  margin: 8px 16px;
+}

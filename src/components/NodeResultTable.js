@@ -7,6 +7,8 @@ const NodeResultTable = ({ list }) => {
     "pentaspherical",
     "gaussian",
     "trendline",
+    "exponentialWithKIteration",
+    "exponentialWithConstant",
   ];
   return (
     <table id="table-calculate-node-result" style={{ display: "none" }}>
@@ -23,12 +25,12 @@ const NodeResultTable = ({ list }) => {
       <tbody>
         {list.map(({ id, latitude, longtitude, attitude, predictAttitude }) => {
           return (
-            <tr key={id}>
+            <tr key={`${id}-${latitude}`}>
               <td>{latitude}</td>
               <td>{longtitude}</td>
               <td>{attitude}</td>
               {modelList.map((key) => {
-                return <td>{predictAttitude[key]}</td>;
+                return <td key={`predict-${key}`}>{predictAttitude[key]}</td>;
               })}
             </tr>
           );

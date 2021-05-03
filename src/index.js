@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Form from './pages/Form'
 import Addnode from './pages/Addnode'
 import ViewVariogram from './pages/ViewVariogram'
+import NodeWithSepaRate from './pages/NodeWithSeparate';
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 //
 const store = createStoreWithMiddleware(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
@@ -23,6 +24,7 @@ ReactDOM.render(
     <Provider store={store}>
         <Router>
             <Route path="/" exact component={Form} />
+            <Route path="/separate" exact component={NodeWithSepaRate} />
         </Router>
     </Provider>
     , document.getElementById('root'));
