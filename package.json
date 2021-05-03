@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@emotion/core": "^10.0.10",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "convert-excel-to-json": "^1.6.1",
     "fast-memoize": "^2.5.1",
     "libxmljs": "^0.19.7",
