@@ -161,9 +161,14 @@ class Form extends Component {
     const error = lastPredictNode
       ? getAllErrorModel(transformDataNode, lastPredictNode)
       : false;
+
     const trendlineData = lastPredictNode
-      ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"])
+      ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"]).filter(([a, b]) => b !== 1)
       : [];
+
+
+
+
     const data = [["range", "semivarian"], ...trendlineData];
     const options = {
       title: "Exponential Polynomial Trendlines",
@@ -353,15 +358,56 @@ class Form extends Component {
                   y: y,
                   z: z,
                   type: "mesh3d",
-                  // intensity: [0, 0.33, 0.66, 10000000],
-                  // colorscale: [
-                  //     [0, 'rgb(255, 0, 0)'],
-                  //     [0.5, 'rgb(0, 255, 0)'],
-                  //     [10000000, 'rgb(0, 0, 255)']
-                  // ]
+                  showscale: true,
+                  intensity: z,
+                  colorscale: [
+                    [0, 'rgb(0, 0, 255)'],
+                    [0.5, 'rgb(0, 128, 0)'],
+                    [1, 'rgb(255, 255, 0)']
+                  ],
+                  colorbar: {
+                    title: 'Predicted Altitude'
+                  },
                 },
               ]}
-              layout={{ width: 900, height: 600, title: "3D Surface Plots" }}
+              layout={{
+                width: 900,
+                height: 600,
+                title: "3D Surface Plots",
+                scene: {
+                  aspectratio: {
+                    x: 1,
+                    y: 1,
+                    z: 0.5
+                  },
+                  zaxis: {
+                    title: 'Predicted Altitude',
+                    backgroundcolor: 'rgb(230,230,200)',
+                    showbackground: true,
+                    zerolinecolor: 'white',
+                    gridcolor: 'white',
+                    nticks: 20,
+                    range: [0, 100],
+
+                  },
+                  yaxis: {
+                    title: 'Longtitude',
+                    nticks: 10,
+                    backgroundcolor: 'rgb(230,230,200)',
+                    showbackground: true,
+                    zerolinecolor: 'white',
+                    gridcolor: 'white',
+                  },
+                  xaxis: {
+                    title: 'Latitude',
+                    nticks: 10,
+                    backgroundcolor: 'rgb(230,230,200)',
+                    showbackground: true,
+                    zerolinecolor: 'white',
+                    gridcolor: 'white',
+                  }
+                }
+              }}
             />
           ) : null}
           {trendlineData.length > 0 && (

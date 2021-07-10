@@ -87,6 +87,7 @@ const calBestAttitudeLastNode = (vairiantNodeObject, model = "exponential") => {
     )
   );
   // to do add error model 5 mel
+
   return {
     sum,
     errorPedictionModel,
@@ -177,8 +178,8 @@ const calculateBestNuggetSillRange = (range, maxRange, variable) => {
   for (let i = 0; i < nuggetArray.length; i++) {
     for (let j = 0; j < sillArray.length; j++) {
       const vairiantNodeObject = tranformSemivariance(range)(
-        +nuggetArray[0],
-        +sillArray[0],
+        +nuggetArray[i],
+        +sillArray[j],
         maxRange
       );
 
@@ -383,6 +384,7 @@ const calculateBestNuggetSillRange = (range, maxRange, variable) => {
       /* spherical */
 
       /*exponential*/
+
       if (minError["exponential"] === 0) {
         minError["exponential"] = modelExponential.errorPedictionModel;
         bestNugget["exponential"] = nuggetArray[i];
