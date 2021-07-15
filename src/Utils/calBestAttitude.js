@@ -75,7 +75,8 @@ const calBestAttitudeLastNode = (vairiantNodeObject, model = "exponential") => {
   const convertMatrix = createMatrix(vairiantNodeObject);
   let A = convertMatrix;
   let b = vairiantNodeObject[vairiantNodeObject.length - 1][model];
-  let w = math.multiply(math.inv(A), b);
+  const inverMatrix = A.length === 1 ? A : math.inv(A);
+  let w = math.multiply(inverMatrix, b);
   let sum = 0;
   for (let i = 0; i < vairiantNodeObject.length - 1; i += 1) {
     sum += vairiantNodeObject[i].attitude * w[i];
