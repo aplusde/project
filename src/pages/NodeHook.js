@@ -1,5 +1,5 @@
-const NodeHook = ()=>{
-	const onChangeFile = (e) => {
+const NodeHook = () => {
+  const onChangeFile = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -27,7 +27,6 @@ const NodeHook = ()=>{
       }, []);
       const centerNode = findCenter(transformDataNode);
       const zone = separateZone(transformDataNode, centerNode);
-      console.log({ zone });
       this.setState({
         nodes: transformDataNode,
         zone,
@@ -35,7 +34,7 @@ const NodeHook = ()=>{
     };
     reader.readAsBinaryString(file);
   };
-	return (
+  return (
 
 	)
 }

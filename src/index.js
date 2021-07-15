@@ -14,6 +14,7 @@ import Form from './pages/Form'
 import Addnode from './pages/Addnode'
 import ViewVariogram from './pages/ViewVariogram'
 import NodeWithSepaRate from './pages/NodeWithSeparate';
+import NodeSixTeenZone from './pages/NodeWithSixTeen';
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 //
 const store = createStoreWithMiddleware(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
@@ -25,6 +26,7 @@ ReactDOM.render(
         <Router>
             <Route path="/" exact component={Form} />
             <Route path="/separate" exact component={NodeWithSepaRate} />
+            <Route path="/sixteen-separate" exact component={NodeSixTeenZone} />
         </Router>
     </Provider>
     , document.getElementById('root'));
