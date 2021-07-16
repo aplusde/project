@@ -6,7 +6,7 @@ import memoize from "fast-memoize";
 import { calCulateAttitude } from "../Utils/calBestAttitude";
 import Loader from "react-loader-spinner";
 import * as XLSX from "xlsx";
-import getXYZ from "../Utils/getXYZ";
+import getXYZ, { getZ } from "../Utils/getXYZ";
 import { getAllErrorModel } from "../Utils/getStatError";
 import computePredict from "../Utils/computePredict";
 import createScatterGraph from "../Utils/createScatterGraph";
@@ -157,7 +157,8 @@ class Form extends Component {
       : false;
     const x = getXYZ(transformDataNode, "latitude");
     const y = getXYZ(transformDataNode, "longtitude");
-    const z = getXYZ(transformDataNode, "attitude");
+    const z = lastPredictNode ? getZ(transformDataNode, model) : [];
+
     const error = lastPredictNode
       ? getAllErrorModel(transformDataNode, lastPredictNode)
       : false;

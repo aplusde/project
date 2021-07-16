@@ -6,7 +6,7 @@ import memoize from "fast-memoize";
 import { calCulateAttitude } from "../Utils/calBestAttitude";
 import Loader from "react-loader-spinner";
 import * as XLSX from "xlsx";
-import getXYZ from "../Utils/getXYZ";
+import getXYZ, { getZ } from "../Utils/getXYZ";
 import { getAllErrorModel } from "../Utils/getStatError";
 import computePredict, {
   transformSemiVarioGramWithSeparateNode,
@@ -198,7 +198,8 @@ class NodeSixTeenZone extends Component {
       : false;
     const x = getXYZ(transformDataNode, "latitude");
     const y = getXYZ(transformDataNode, "longtitude");
-    const z = getXYZ(transformDataNode, "attitude");
+    const z = isAllNodeHavePredict ? getZ(transformDataNode, model) : [];
+
     const error = isAllNodeHavePredict
       ? getAllErrorModel(transformDataNode)
       : false;
