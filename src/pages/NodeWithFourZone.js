@@ -8,7 +8,9 @@ import Loader from "react-loader-spinner";
 import * as XLSX from "xlsx";
 import getXYZ, { getZ } from "../Utils/getXYZ";
 import { getAllErrorModel } from "../Utils/getStatError";
-import computePredict from "../Utils/computePredict";
+import computePredict, {
+  transformSemiVarioGramWithSeparateNode,
+} from "../Utils/computePredict";
 import createScatterGraph from "../Utils/createScatterGraph";
 import { Chart } from "react-google-charts";
 import getTrendlines from "../Utils/getTrendlines";
@@ -16,9 +18,10 @@ import getTrendlines from "../Utils/getTrendlines";
 import ErrorTable from "../components/ErrorTable";
 import NodeResultTable from "../components/NodeResultTable";
 import { Link } from "react-router-dom";
+import { findCenter, separateZone } from "../Utils/separateNode";
 
 const memoizeCalCulateAttitude = memoize(calCulateAttitude);
-class Form extends Component {
+class NodeWithSeparate extends Component {
   state = {
     nodes: [{ id: 1, latitude: "", longtitude: "", attitude: "" }],
     x: [],
@@ -103,21 +106,51 @@ class Form extends Component {
     this.setState({
       loading: !loading,
     });
-    console.time("start");
-    const {
-      bestSumList,
-      bestSum,
-      allRangeOfNodes,
-      semiVarioGram,
-    } = memoizeCalCulateAttitude(nodes, variable);
-    let newNodesWithLastAttitude = nodes;
+    const center = findCenter(nodes);
+    const zone = separateZone(nodes, center);
+    const key = Object.keys(zone);
+    const newNode = [];
+    const allRangeOfNodesTemp = [];
+    let semiVarioGramTemp = {
+      exponential: [],
+      exponentialWithConstant: [],
+      exponentialWithKIteration: [],
+      gaussian: [],
+      linear: [],
+      pentaspherical: [],
+      spherical: [],
+      trendline: [],
+    };
+
+    for (let i = 0; i < key.length; i++) {
+      const selectedZone = zone[key[i]];
+      const {
+        bestSumList,
+        allRangeOfNodes,
+        semiVarioGram,
+      } = memoizeCalCulateAttitude(selectedZone, variable);
+
+      semiVarioGramTemp = transformSemiVarioGramWithSeparateNode(
+        semiVarioGram,
+        semiVarioGramTemp
+      );
+
+      allRangeOfNodesTemp.push(...allRangeOfNodes);
+
+      const listId = selectedZone.map(({ id }) => id);
+
+      const trasnformNodesWithPredict = computePredict(
+        selectedZone,
+        bestSumList,
+        listId
+      );
+      newNode.push(...trasnformNodesWithPredict);
+    }
 
     this.setState({
-      bestSumList,
-      lastPredictNode: bestSum,
-      allRangeOfNodes,
-      nodes: newNodesWithLastAttitude,
-      semiVarioGram,
+      allRangeOfNodes: allRangeOfNodesTemp,
+      semiVarioGram: semiVarioGramTemp,
+      nodes: newNode.sort((a, b) => a.id < b.id),
       loading: false,
     });
     console.timeEnd("start");
@@ -144,31 +177,31 @@ class Form extends Component {
       lastPredictNode = false,
       allRangeOfNodes,
       semiVarioGram,
-      bestSumList = false,
       model = "exponential",
       variable,
     } = this.state;
-    const transformDataNode = lastPredictNode // TODO: lastPredictNode
-      ? computePredict(nodes, bestSumList)
-      : nodes;
-
-    const scatterGraph = lastPredictNode
+    const transformDataNode = nodes.sort((a, b) => {
+      if (a.id > b.id) {
+        return 1;
+      }
+      return -1;
+    });
+    const isAllNodeHavePredict = nodes.every(
+      ({ predictAttitude }) => predictAttitude !== undefined
+    );
+    const scatterGraph = isAllNodeHavePredict
       ? createScatterGraph(allRangeOfNodes, semiVarioGram, model)
       : false;
     const x = getXYZ(transformDataNode, "latitude");
     const y = getXYZ(transformDataNode, "longtitude");
-    const z = lastPredictNode ? getZ(transformDataNode, model) : [];
-
-    const error = lastPredictNode
-      ? getAllErrorModel(transformDataNode, lastPredictNode)
+    const z = isAllNodeHavePredict ? getZ(transformDataNode, model) : [];
+    const error = isAllNodeHavePredict
+      ? getAllErrorModel(transformDataNode)
       : false;
 
-    const trendlineData = lastPredictNode
+    const trendlineData = isAllNodeHavePredict
       ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"]).filter(([a, b]) => b !== 1)
       : [];
-
-
-
 
     const data = [["range", "semivarian"], ...trendlineData];
     const options = {
@@ -259,46 +292,48 @@ class Form extends Component {
           </div>
 
           {transformDataNode.map(
-            ({ id, latitude, longtitude, attitude, predictAttitude }) => (
-              <div key={id + latitude.toString()} className="input-node">
-                <div className="id-node">
-                  <p>{id}</p>
+            ({ id, latitude, longtitude, attitude, predictAttitude }) => {
+              return (
+                <div key={id + latitude.toString()} className="input-node">
+                  <div className="id-node">
+                    <p>{id}</p>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="latitude"
+                      value={latitude || ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="longtitude"
+                      value={longtitude || ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="attitude"
+                      value={attitude || ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeNode(id)}
+                      name="predictAttitude"
+                      value={isAllNodeHavePredict ? predictAttitude[model] : ""}
+                    ></input>
+                  </div>
+                  <div>
+                    <button id={id} onClick={this.deleteNodes}>
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="latitude"
-                    value={latitude || ""}
-                  ></input>
-                </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="longtitude"
-                    value={longtitude || ""}
-                  ></input>
-                </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="attitude"
-                    value={attitude || ""}
-                  ></input>
-                </div>
-                <div>
-                  <input
-                    onChange={this.onChangeNode(id)}
-                    name="predictAttitude"
-                    value={bestSumList ? predictAttitude[model] : ""}
-                  ></input>
-                </div>
-                <div>
-                  <button id={id} onClick={this.deleteNodes}>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            )
+              );
+            }
           )}
 
           <input onChange={this.onChangeFile} type="file"></input>
@@ -354,7 +389,7 @@ class Form extends Component {
               }}
             />
           )}
-          {lastPredictNode ? (
+          {isAllNodeHavePredict ? (
             <Plot
               data={[
                 {
@@ -375,9 +410,7 @@ class Form extends Component {
                 },
               ]}
               layout={{
-                width: 900,
-                height: 600,
-                title: "3D Surface Plots",
+                width: 900, height: 600, title: "3D Surface Plots",
                 scene: {
                   aspectratio: {
                     x: 1,
@@ -414,6 +447,7 @@ class Form extends Component {
               }}
             />
           ) : null}
+
           {trendlineData.length > 0 && (
             <Chart
               chartType="ScatterChart"
@@ -430,4 +464,4 @@ class Form extends Component {
   }
 }
 
-export default Form;
+export default NodeWithSeparate;

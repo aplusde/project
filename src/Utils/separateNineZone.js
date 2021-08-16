@@ -1,7 +1,5 @@
 export const separateNineZone = (nodes = [], n) => {
-  console.log(nodes.length)
   const perZone = Math.floor(nodes.length / n)
-  console.log({ perZone });
   let zone = {}
   const tempNode = [
     ...nodes
@@ -19,7 +17,6 @@ export const separateNineZone = (nodes = [], n) => {
     ...zone[n - 1],
     ...tempNode
   ]
-  console.log({ zone })
 
 
   return zone

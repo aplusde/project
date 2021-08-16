@@ -18,11 +18,10 @@ import getTrendlines from "../Utils/getTrendlines";
 import ErrorTable from "../components/ErrorTable";
 import NodeResultTable from "../components/NodeResultTable";
 import { Link } from "react-router-dom";
-import { findCenter, separateZone } from "../Utils/separateNode";
-import { separateSixTeenZone } from "../Utils/separateSixTeenZone";
+import { findCenter, separateNineZone, separateZone } from "../Utils/separateNode";
 
 const memoizeCalCulateAttitude = memoize(calCulateAttitude);
-class NodeSixTeenZone extends Component {
+class NodeWithSeparate extends Component {
   state = {
     nodes: [{ id: 1, latitude: "", longtitude: "", attitude: "" }],
     x: [],
@@ -107,11 +106,7 @@ class NodeSixTeenZone extends Component {
     this.setState({
       loading: !loading,
     });
-    const center = findCenter(nodes);
-
-    const zoneFours = separateZone(nodes, center);
-    const zone = separateSixTeenZone(zoneFours)
-
+    const zone = separateNineZone(nodes);
     const key = Object.keys(zone);
     const newNode = [];
     const allRangeOfNodesTemp = [];
@@ -157,7 +152,6 @@ class NodeSixTeenZone extends Component {
       nodes: newNode.sort((a, b) => a.id < b.id),
       loading: false,
     });
-    console.timeEnd("start");
   };
   handleChangeModel = (e) => {
     const value = e.target.value;
@@ -199,7 +193,6 @@ class NodeSixTeenZone extends Component {
     const x = getXYZ(transformDataNode, "latitude");
     const y = getXYZ(transformDataNode, "longtitude");
     const z = isAllNodeHavePredict ? getZ(transformDataNode, model) : [];
-
     const error = isAllNodeHavePredict
       ? getAllErrorModel(transformDataNode)
       : false;
@@ -232,6 +225,7 @@ class NodeSixTeenZone extends Component {
         <div style={{ margin: "15px" }}>
           <Link style={{ marginRight: "15px" }} to="/">1 x 1 zone</Link>
           <Link style={{ marginRight: "15px" }} to="/separate">2 x 2 zones</Link>
+          <Link style={{ marginRight: "15px" }} to="/nine-separate">3 x 3 zones</Link>
           <Link to="/sixteen-separate">4 x 4 zones</Link>
           <h1>
             {model.replace(/^\w/, (c) => c.toUpperCase()) || "Exponential"}
@@ -468,4 +462,4 @@ class NodeSixTeenZone extends Component {
   }
 }
 
-export default NodeSixTeenZone;
+export default NodeWithSeparate;
