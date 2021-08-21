@@ -447,6 +447,73 @@ class NodeWithSeparate extends Component {
               }}
             />
           ) : null}
+          {isAllNodeHavePredict ? (
+            <Plot
+              data={[
+                {
+                  x: x,
+                  y: y,
+                  z: z,
+                  intensity: z,
+                  type: "contour",
+                  contours: {
+                    showlabels: true,
+                    labelfont: {
+                      family: 'Raleway',
+                      size: 12,
+                      color: 'white',
+                    }
+                  },
+                  colorscale: [
+                    [0, 'rgb(0, 0, 255)'],
+                    [0.5, 'rgb(0, 128, 0)'],
+                    [1, 'rgb(255, 255, 0)']
+                  ],
+                  colorbar: {
+                    title: 'Predicted Altitude'
+                  },
+                },
+              ]}
+              layout={{
+                width: 900,
+                height: 600,
+                title: "Contour Plots",
+                scene: {
+                  aspectratio: {
+                    x: 1,
+                    y: 1,
+                    z: 0.5
+                  },
+                  zaxis: {
+                    title: 'Predicted Altitude',
+                    backgroundcolor: 'rgb(230,230,200)',
+                    showbackground: true,
+                    zerolinecolor: 'white',
+                    gridcolor: 'white',
+                    nticks: 20,
+                    range: [0, 100],
+
+                  },
+                  yaxis: {
+                    title: 'Longtitude',
+                    nticks: 10,
+                    backgroundcolor: 'rgb(230,230,200)',
+                    showbackground: true,
+                    zerolinecolor: 'white',
+                    gridcolor: 'white',
+                  },
+                  xaxis: {
+                    title: 'Latitude',
+                    nticks: 10,
+                    backgroundcolor: 'rgb(230,230,200)',
+                    showbackground: true,
+                    zerolinecolor: 'white',
+                    gridcolor: 'white',
+                  }
+                }
+              }}
+            />
+          ) : null}
 
           {trendlineData.length > 0 && (
             <Chart
