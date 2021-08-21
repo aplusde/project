@@ -203,7 +203,7 @@ class NodeWithSeparate extends Component {
 
     const data = [["range", "semivarian"], ...trendlineData];
     const options = {
-      title: "Exponential Polynomial Trendlines",
+      title: "Exponential Polynomial Trendline",
       legend: "none",
       crosshair: { trigger: "both", orientation: "both" },
       trendlines: {
@@ -213,6 +213,8 @@ class NodeWithSeparate extends Component {
           visibleInLegend: true,
         },
       },
+      vAxis: { title: 'Semivariogram' },
+      hAxis: { title: 'Distance' },
     };
     return (
       <div className="container-graph">
