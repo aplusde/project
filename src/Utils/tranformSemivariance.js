@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export default (node = []) => (NUGGET, SILL, RANGE) =>
   node.reduce((acc, current) => {
     return [
@@ -38,9 +40,9 @@ export default (node = []) => (NUGGET, SILL, RANGE) =>
             return [
               ...acc,
               NUGGET +
-                SILL *
-                  ((3 * rangeValue) / (2 * RANGE) -
-                    Math.pow(rangeValue / RANGE, 3) / 2),
+              SILL *
+              ((3 * rangeValue) / (2 * RANGE) -
+                Math.pow(rangeValue / RANGE, 3) / 2),
             ];
           }
         }, []),
@@ -53,10 +55,10 @@ export default (node = []) => (NUGGET, SILL, RANGE) =>
             return [
               ...acc,
               NUGGET +
-                SILL *
-                  ((15 * rangeValue) / (8 * RANGE) -
-                    (5 / 4) * Math.pow(rangeValue / RANGE, 3) +
-                    (3 / 8) * Math.pow(rangeValue / RANGE, 5)),
+              SILL *
+              ((15 * rangeValue) / (8 * RANGE) -
+                (5 / 4) * Math.pow(rangeValue / RANGE, 3) +
+                (3 / 8) * Math.pow(rangeValue / RANGE, 5)),
             ];
           }
         }, []),
@@ -69,11 +71,11 @@ export default (node = []) => (NUGGET, SILL, RANGE) =>
             return [
               ...acc,
               NUGGET +
-                SILL *
-                  (1 -
-                    Math.exp(
-                      (Math.pow(rangeValue, 2) / Math.pow(RANGE, 2)) * -1
-                    )),
+              SILL *
+              (1 -
+                Math.exp(
+                  (Math.pow(rangeValue, 2) / Math.pow(RANGE, 2)) * -1
+                )),
             ];
           }
         }, []),
@@ -86,10 +88,10 @@ export default (node = []) => (NUGGET, SILL, RANGE) =>
             } else {
               return [
                 ...acc,
-                4.154 * Math.pow(rangeValue, 3) * Math.pow(10, -10) -
-                  5.191 * Math.pow(rangeValue, 2) * Math.pow(10, -7) +
-                  3.286 * rangeValue * Math.pow(10, -4) +
-                  9.3 * Math.pow(10, -6),
+                1.692 * Math.pow(rangeValue, 3) * Math.pow(10, -10) -
+                2.969 * Math.pow(rangeValue, 2) * Math.pow(10, -7) +
+                2.507 * rangeValue * Math.pow(10, -4) +
+                2.53 * Math.pow(10, -5),
               ];
             }
           },

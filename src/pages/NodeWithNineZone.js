@@ -201,10 +201,10 @@ class NodeWithSeparate extends Component {
       ? getTrendlines(allRangeOfNodes, semiVarioGram["exponential"]).filter(([a, b]) => b !== 1)
       : [];
 
-    const data = [["range", "semivarian"], ...trendlineData];
+    const data = [["Distance", "Semivariance"], ...trendlineData];
     const options = {
       title: "Exponential Polynomial Trendline",
-      legend: "none",
+      legend: 'bottom',
       crosshair: { trigger: "both", orientation: "both" },
       trendlines: {
         0: {
@@ -213,7 +213,7 @@ class NodeWithSeparate extends Component {
           visibleInLegend: true,
         },
       },
-      vAxis: { title: 'Semivariogram' },
+      vAxis: { title: 'Semivariance' },
       hAxis: { title: 'Distance' },
     };
     return (

@@ -170,10 +170,10 @@ class Form extends Component {
 
 
 
-    const data = [["range", "semivarian"], ...trendlineData];
+    const data = [["Distance", "Semivariance"], ...trendlineData];
     const options = {
       title: "Exponential Polynomial Trendline",
-      legend: "none",
+      legend: 'bottom',
       crosshair: { trigger: "both", orientation: "both" },
       trendlines: {
         0: {
@@ -182,7 +182,7 @@ class Form extends Component {
           visibleInLegend: true,
         },
       },
-      vAxis: { title: 'Semivariogram' },
+      vAxis: { title: 'Semivariance' },
       hAxis: { title: 'Distance' },
     };
     return (
