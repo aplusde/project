@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 
 export default (node = []) => (NUGGET, SILL, RANGE) =>
   node.reduce((acc, current) => {
