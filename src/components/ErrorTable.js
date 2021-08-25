@@ -59,13 +59,14 @@ const ErrorTable = ({ error, semiVarioGram, variable }) => {
             <td>{error["gaussian"].meanSquareError}</td>
             <td>{error["gaussian"].rootMeanSquareError}</td>
           </tr>
+          {/* trendline */}
           <tr>
             <td>Exponential Polynomial Trendline</td>
-            <td>{error["trendline"].meanError}</td>
-            <td>{error["trendline"].meanOfPercentageError}</td>
-            <td>{error["trendline"].meanAbsoluteError}</td>
-            <td>{error["trendline"].meanSquareError}</td>
-            <td>{error["trendline"].rootMeanSquareError}</td>
+            <td>{error["exponential"].meanError}</td>
+            <td>{error["exponential"].meanOfPercentageError}</td>
+            <td>{error["exponential"].meanAbsoluteError}</td>
+            <td>{error["exponential"].meanSquareError}</td>
+            <td>{error["exponential"].rootMeanSquareError}</td>
           </tr>
           <tr>
             <td>Exponential with K iteration</td>
